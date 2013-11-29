@@ -1,6 +1,7 @@
 var twitter = require('ntwitter');
 var request = require('superagent');
-var credentials = require('./credentials.js');
+var credentials = require('../credentials.js');
+var Db = require('../mongo.js');
 
 var twit = new twitter({
     consumer_key: credentials.consumer_key,
@@ -11,7 +12,7 @@ var twit = new twitter({
 
 /*mongo*/
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/finalyearproject';
-var Db = require('./mongo.js');
+
 var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
