@@ -1,13 +1,12 @@
-// (function(){
-	$.ajax({
-		type: "GET",
-		url: "/getAll",
-		contentType: "application/json; charset=utf-8",
-		success: function(data){
-			$("#rawData").text(JSON.stringify(data));
-		},
-		error: function(error){
-			//$("#rawData").append(data);
-		}
-	});
-// })();
+//on page load find all -> temp for testing
+$.ajax({
+	type: "GET",
+	url: "/findAll",
+	contentType: "application/json; charset=utf-8",
+	success: function(data){
+		console.log(data);
+		$("#rawData").text(JSON.stringify(data));
+	},
+	error: function(error){
+	}
+});

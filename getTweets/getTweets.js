@@ -12,7 +12,6 @@ var twit = new twitter({
 
 /*mongo*/
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/finalyearproject';
-
 var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
