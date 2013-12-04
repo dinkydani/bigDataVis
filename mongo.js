@@ -30,7 +30,6 @@ DatabaseConnection.prototype.findAll = function(callback) {
           		callback(err);
           	}
           	else {
-          		console.log("findAll successful");
           		callback(null, results);
           	}
         });
@@ -49,7 +48,6 @@ DatabaseConnection.prototype.upsert = function(data, callback){
 	          		callback(err);
 	          	}
 	          	else {
-	          		console.log("Upsert successful");
 	          		callback(null, object);
 	          	}
 			});
