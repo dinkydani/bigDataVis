@@ -1,0 +1,7 @@
+Final Year Computer Science Project
+
+An Evaluation of Big Data Visualisation Techniques Presented as an Interactive Web App
+
+Twitter data collection and stored using getTweets.js
+
+Data retrieved and visualised using d3.js
