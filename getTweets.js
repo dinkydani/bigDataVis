@@ -12,8 +12,7 @@ var twit = new twitter({
 
 /*mongo*/
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/finalyearproject';
-// mongodb://<dbuser>:<dbpassword>@ds061238.mongolab.com:61238/heroku_app21304795
-
+//var mongoUri = 'mongodb://<dbuser>:<dbpassword>@ds061238.mongolab.com:61238/heroku_app21304795';
 var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
