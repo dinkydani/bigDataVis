@@ -40,7 +40,7 @@ GetTweets.prototype.stream = function() {
 			});
 
 	        //kill the stream after x seconds
-	        setTimeout(stream.destroy, 5000);
+	        setTimeout(stream.destroy, 30000);
         });
 };
 
