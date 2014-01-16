@@ -34,7 +34,7 @@ d3.json('/findAll', function (data){
 
     dc.renderAll();
     
-	$("#rawData").text(JSON.stringify(data));
+	//$("#rawData").text(JSON.stringify(data));
 });
 
 
