@@ -2,6 +2,7 @@ var	express = require('express');
 var	http = require('http');
 var path = require('path');
 var app = express();
+var GetTweets = require('./getTweets.js');
 
 /*mongo*/
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/finalyearproject';
@@ -14,6 +15,9 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
+
+var tweets = new GetTweets();
+tweets.stream();
 
 app.get('/findAll', function(req, res){
     db.findAll( function(err, data){

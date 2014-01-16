@@ -12,6 +12,8 @@ var twit = new twitter({
 
 /*mongo*/
 var mongoUri = process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/finalyearproject';
+// mongodb://<dbuser>:<dbpassword>@ds061238.mongolab.com:61238/heroku_app21304795
+
 var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
@@ -127,7 +129,7 @@ function getSentiment(tweet, callback){
 }
 
 //setup the streamer object and start the stream
-var tweets = new GetTweets();
-tweets.stream();
+// var tweets = new GetTweets();
+// tweets.stream();
 
-//module.exports = GetTweets;
+module.exports = GetTweets;
