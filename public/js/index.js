@@ -35,11 +35,11 @@ d3.json('/findAll', function (data){
 
     var dayOfWeekDimension = ndx.dimension(function (d) {
         //"time" : "Sun Dec 08 11:10:03 +0000 2013"
-        var datetime = d.tweet.time;
-        var split = datetime.split(" ");
-        var day = split[0];
-
-        return day;
+        var format = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
+        var date = format.parse(d.tweet.time);
+        var day = date.getDay();
+        var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        return days[day];;
     });
 
     var dayOfWeekGroup = dayOfWeekDimension.group();
@@ -73,5 +73,3 @@ d3.json('/findAll', function (data){
     
 	//$("#rawData").text(JSON.stringify(data));
 });
-
-
