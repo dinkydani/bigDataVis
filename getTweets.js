@@ -128,7 +128,7 @@ function getSentiment(tweet, callback){
 }
 
 //setup the streamer object and start the stream
-// var tweets = new GetTweets();
-// tweets.stream();
+var tweets = new GetTweets();
+tweets.stream();
 
-module.exports = GetTweets;
+//module.exports = GetTweets;
