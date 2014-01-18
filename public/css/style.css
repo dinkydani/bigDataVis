@@ -2,6 +2,14 @@ body {
 	padding-top: 50px;
 }
 
+header{
+	text-align: center;
+}
+
+#charts{
+	text-align: center;
+}
+
 #footer{
 	text-align: center;
 }
