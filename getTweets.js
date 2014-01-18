@@ -11,8 +11,8 @@ var twit = new twitter({
 });
 
 /*mongo*/
-var mongoUri = 'mongodb://localhost/finalyearproject';
-//var mongoUri = 'mongodb://dinkydani:' + credentials.mongo_password + '@ds061238.mongolab.com:61238/heroku_app21304795';
+//var mongoUri = 'mongodb://localhost/finalyearproject';
+var mongoUri = 'mongodb://dinkydani:' + credentials.mongo_password + '@ds061238.mongolab.com:61238/heroku_app21304795';
 var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
