@@ -10,10 +10,10 @@
 </head>
 
 <body>
-  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
       <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".bs-navbar-collapse">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
@@ -21,75 +21,87 @@
         </button>
         <a class="navbar-brand" href="../">Big Data</a>
       </div>
-      <div class="collapse navbar-collapse">
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <nav class="navbar-collapse bs-navbar-collapse collapse">
         <ul class="nav navbar-nav">
           <li class="active"><a href="../">Home</a></li>
           <li><a href="#about">About</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
-      </div><!--/.nav-collapse -->
+      </nav><!--/.nav-collapse -->
+    
     </div>
-  </div>
+  </nav>
 
-  <div class="jumbotron">
+  <header class="jumbotron">
     <div class="container">
       <h1>An Evaluation of Big Data Visualisation Techniques</h1>
         <p>Danielle Johnson Final Year Project</p>
     </div>
-  </div>
+  </header>
 
-<div class="container">
-    <!--   <div class="row">
-      <div class="col-md-4">
-        <h2>Heading</h2>
-        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+  <main class="container">
+    <div id="charts">
+      <!--   <div class="row">
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+        </div>
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+       </div>
+        <div class="col-md-4">
+          <h2>Heading</h2>
+          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+        </div>
+      </div> -->
+      <h3>Subset of Twitter Data with Sentiment Analysis</h3>
+
+      <div class="row">
+        <div class="col-md-12">
+          <div id="sentiment-chart" class="col-md-3 col-sm-4 col-xs-12">
+            <strong>Sentiment Pie</strong>
+            <a class="reset" href="javascript:sentimentChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+          </div>
+          <div id="day-of-week-chart" class="col-md-3 col-sm-4 col-xs-12">
+            <strong>Day of the Week</strong>
+            <a class="reset" href="javascript:dayOfWeekChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+          </div>
+
       </div>
-      <div class="col-md-4">
-        <h2>Heading</h2>
-        <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-     </div>
-      <div class="col-md-4">
-        <h2>Heading</h2>
-        <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+
+      <div class="row">
+        <div class="dc-data-count col-md-12">
+          <span class="filter-count"></span> selected out of <span class="total-count"></span> tweets
+        </div>
       </div>
-    </div> -->
-    <h3>Subset of Twitter Data with Sentiment Analysis</h3>
-    <div class="row">
-      <div id="sentiment-chart" class="col-md-4">
-        <strong>Sentiment Pie</strong>
-        <a class="reset" href="javascript:sentimentChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        <div class="clearfix"></div>
-      </div>
-      <div id="day-of-week-chart" class="col-md-4">
-        <strong>Day of the Week</strong>
-        <a class="reset" href="javascript:dayOfWeekChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-        <div class="clearfix"></div>
-      </div>
+        
+
     </div>
-    <div class="row">
-      <div class="dc-data-count col-md-4">
-        <span class="filter-count"></span> selected out of <span class="total-count"></span> tweets
+
+
+  </main>
+  <footer id="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <hr>
+          <p>© Danielle Johnson <script type="text/javascript"> var d = new Date(); document.write(d.getFullYear()); </script></p>
+        </div>
       </div>
+      
     </div>
-
-    <!-- <div class="row">
-      <div class="col-md-12">
-        <h2>Raw Data</h2>
-          <div id="rawData"></div>  
-      </div>
-    </div> -->
-
-    <hr>
-    <footer>
-      <p>© Danielle Johnson <script type="text/javascript"> var d = new Date(); document.write(d.getFullYear()); </script></p>
-    </footer>
-  </div>
-
+  </footer>
   
   <script src="resources/d3.js"></script>
   <script src="resources/crossfilter.js"></script>
   <script src="resources/dc.js"></script>
   <script src="resources/jquery.js"></script>
+  <script src="resources/bootstrap.js"></script>
 
   <script src="js/index.js"></script>
 </body>
