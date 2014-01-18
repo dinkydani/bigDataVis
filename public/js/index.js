@@ -1,8 +1,10 @@
 
 var sentimentChart = dc.pieChart("#sentiment-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
+var countryChart = dc.pieChart("#country-chart");
 
 d3.json('/findAll', function (data){
+    console.log(data);
 	//create crossfilter dimensions and groups
 	var ndx = crossfilter(data);
     var all = ndx.groupAll();
@@ -26,7 +28,7 @@ d3.json('/findAll', function (data){
     sentimentChart.width(180)
         .height(180)
         .radius(80)
-        //.innerRadius(30)
+        .innerRadius(30)
         .dimension(sentimentDimension)
         .group(sentimentGroup);
     
@@ -52,6 +54,23 @@ d3.json('/findAll', function (data){
         .dimension(dayOfWeekDimension)
         .elasticX(true)
         .xAxis().ticks(4);
+
+
+
+
+
+
+    var countryDimension = ndx.dimension(function (d){
+        return d.tweet.geo.place.country_code;
+    });
+
+    var countryGroup = countryDimension.group();
+
+    countryChart.width(180)
+        .height(180)
+        .radius(80)
+        .dimension(countryDimension)
+        .group(countryGroup);
 
     // dateChart.width(500)
     //     .height(60)

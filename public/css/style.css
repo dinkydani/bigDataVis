@@ -6,6 +6,10 @@ header{
 	text-align: center;
 }
 
+.dc-chart g.row text{
+	fill: black;
+}
+
 #charts{
 	text-align: center;
 }

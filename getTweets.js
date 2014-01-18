@@ -17,8 +17,12 @@ var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
 var sentimentBatch = []; //array to store tweets until they are sent to sentiment analysis
-var batchSize = 25; //number of tweets to batch 
 var sentimentUrl = 'http://www.sentiment140.com/api/bulkClassifyJson'; //url of sentiment analysis
+
+var geoBatch = [];
+var geoUrl = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='//43.1755775,-83.7181397&sensor=false
+
+var batchSize = 25; //number of tweets to batch 
 
 var topicToTrack = "#blackfriday" //'track' : topicToTrack, 
 
@@ -41,7 +45,7 @@ GetTweets.prototype.stream = function() {
 			});
 
 	        //kill the stream after x seconds
-	        setTimeout(stream.destroy, 30000);
+	        setTimeout(stream.destroy, 15000);
         });
 };
 
@@ -55,8 +59,8 @@ function processTweet(data){
 		hashtags : data.entities.hashtags || [],
 		retweets : data.retweet_count,
 		geo : {
-			geo : data.geo, // longlat
-			coords : data.coordinates, // latlong
+			geo : data.geo, // lat long
+			coords : data.coordinates, // long lat (geojson form)
 			place : data.place //sometimes null, can have place.country_code or place.country if not null
 		}
 	};
@@ -70,11 +74,10 @@ function processTweet(data){
 	    };
 	};
 
-	//COULD PUT IN MONGO HERE AND THEN UPSERT FOR SENTIMENT??
-
 	//get the sentiment for this tweet
-
-	getSentiment(tweet, function(data){
+	getGeo(tweet, function(tweet, data){
+		console.log("Tweet has correct geo");
+		getSentiment(tweet, function(data){
 		console.log("Got sentiment");
 
 		//store tweets in mongo
@@ -83,6 +86,8 @@ function processTweet(data){
 			else console.log("Success saving to Mongo");
 		});
 	});
+	});
+	
 };
 
 function getSentiment(tweet, callback){
@@ -110,7 +115,7 @@ function getSentiment(tweet, callback){
 
 		//use superagent to make http request
 		request
-      		.post('http://www.sentiment140.com/api/bulkClassifyJson')
+      		.post(sentimentUrl)
       		.send(data)
     		.end(function (error, res) {
 		    	if (res.ok) {
@@ -125,6 +130,54 @@ function getSentiment(tweet, callback){
     sentimentBatch = [];
 
 	}
+}
+
+function getGeo(tweet, callback){
+	//if a tweet has a place (country code)
+	if(tweet.geo.place){
+		console.log(tweet.geo.place.country_code);
+		//if a tweet has geo and coordinates for mapping 
+		if(tweet.geo.geo){
+			console.log("Lat: " + tweet.geo.geo.coordinates[0]);
+			console.log("Lon: " + tweet.geo.geo.coordinates[1]);
+			//then it can be sent for sentiment analysis
+			callback(tweet);
+		}else{
+			console.log("no geo tweet disposed");
+		}
+	} else{
+		console.log("no place tweet disposed");
+	}
+
+	//console.log(tweet);
+	// if(tweet.geo.geo){
+	// 	if(tweet.geo.geo.coordinates){
+	// 		var lat = tweet.geo.geo.coordinates[0];
+	// 		var lon = tweet.geo.geo.coordinates[1];
+
+	// 		request
+	// 			.get(geoUrl + lat + "," + lon + "&sensor=false")
+	// 			.end(function(error, res){
+	// 				if(res.ok){
+	// 					var data = res.body;
+	// 					for(i = 0; i < data.results.length; i++){
+	// 						for(j = 0; j < data.results[i].types.length; j++){
+	// 							if(data.results[i].types[j] == "country"){
+	// 								var countryCode = data.results[i].address_components[0].short_name;
+	// 								tweet.geo.countryCode = countryCode;
+	// 							}
+	// 						}
+	// 					}
+	// 				}
+	// 				else{
+	// 					console.error('Error getting geo', res.text);
+	// 				}
+	// 			});
+
+	// 	}
+	// }else{
+	// 	console.log("Tweet has no geo");
+	// }
 }
 
 //setup the streamer object and start the stream
