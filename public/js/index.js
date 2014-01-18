@@ -9,6 +9,9 @@ d3.json('/findAll', function (data){
 	var ndx = crossfilter(data);
     var all = ndx.groupAll();
 
+
+
+    /*SENTIMENT CHART*/
     //summarize sentiment by polarity
     var sentimentDimension = ndx.dimension(function (d) {
     	if(d.polarity == 0)
@@ -34,7 +37,7 @@ d3.json('/findAll', function (data){
     
 
 
-
+    /*DAY OF THE WEEK CHART*/
     var dayOfWeekDimension = ndx.dimension(function (d) {
         //"time" : "Sun Dec 08 11:10:03 +0000 2013"
         var format = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
@@ -59,7 +62,7 @@ d3.json('/findAll', function (data){
 
 
 
-
+    /* COUNTRY CHART*/
     var countryDimension = ndx.dimension(function (d){
         return d.tweet.geo.place.country_code;
     });
