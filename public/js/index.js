@@ -120,6 +120,9 @@ d3.json('/findAll', function (data){
         marker.on('mouseover', function(e){
             marker.openPopup();
         });
+        marker.on('click', function(e){
+            marker.openPopup();
+        });
         marker.addTo(map);
     });
 });
