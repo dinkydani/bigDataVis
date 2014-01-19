@@ -11,16 +11,13 @@ var twit = new twitter({
 });
 
 /*mongo*/
-//var mongoUri = 'mongodb://localhost/finalyearproject';
-var mongoUri = 'mongodb://dinkydani:' + credentials.mongo_password + '@ds061238.mongolab.com:61238/heroku_app21304795';
+var mongoUri = 'mongodb://localhost/finalyearproject';
+//var mongoUri = 'mongodb://dinkydani:' + credentials.mongo_password + '@ds061238.mongolab.com:61238/heroku_app21304795';
 var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
 var sentimentBatch = []; //array to store tweets until they are sent to sentiment analysis
 var sentimentUrl = 'http://www.sentiment140.com/api/bulkClassifyJson'; //url of sentiment analysis
-
-var geoBatch = [];
-var geoUrl = 'http://maps.googleapis.com/maps/api/geocode/json?latlng='//43.1755775,-83.7181397&sensor=false
 
 var batchSize = 25; //number of tweets to batch 
 
@@ -148,36 +145,6 @@ function getGeo(tweet, callback){
 	} else{
 		console.log("no place tweet disposed");
 	}
-
-	//console.log(tweet);
-	// if(tweet.geo.geo){
-	// 	if(tweet.geo.geo.coordinates){
-	// 		var lat = tweet.geo.geo.coordinates[0];
-	// 		var lon = tweet.geo.geo.coordinates[1];
-
-	// 		request
-	// 			.get(geoUrl + lat + "," + lon + "&sensor=false")
-	// 			.end(function(error, res){
-	// 				if(res.ok){
-	// 					var data = res.body;
-	// 					for(i = 0; i < data.results.length; i++){
-	// 						for(j = 0; j < data.results[i].types.length; j++){
-	// 							if(data.results[i].types[j] == "country"){
-	// 								var countryCode = data.results[i].address_components[0].short_name;
-	// 								tweet.geo.countryCode = countryCode;
-	// 							}
-	// 						}
-	// 					}
-	// 				}
-	// 				else{
-	// 					console.error('Error getting geo', res.text);
-	// 				}
-	// 			});
-
-	// 	}
-	// }else{
-	// 	console.log("Tweet has no geo");
-	// }
 }
 
 //setup the streamer object and start the stream

@@ -10,6 +10,10 @@ header{
 	fill: black;
 }
 
+#plotted-map{
+	height: 500px;
+}
+
 #charts{
 	text-align: center;
 }

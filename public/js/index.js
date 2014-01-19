@@ -33,8 +33,12 @@ d3.json('/findAll', function (data){
         .radius(80)
         .innerRadius(30)
         .dimension(sentimentDimension)
-        .group(sentimentGroup);
+        .group(sentimentGroup)
+        .label(function (d){
+            return d.key + "(" + Math.floor(d.value / all.value() * 100) + "%)";
+        });
     
+
 
 
     /*DAY OF THE WEEK CHART*/
@@ -61,7 +65,6 @@ d3.json('/findAll', function (data){
 
 
 
-
     /* COUNTRY CHART*/
     var countryDimension = ndx.dimension(function (d){
         return d.tweet.geo.place.country_code;
@@ -73,7 +76,11 @@ d3.json('/findAll', function (data){
         .height(180)
         .radius(80)
         .dimension(countryDimension)
-        .group(countryGroup);
+        .group(countryGroup)
+        .title(function (d){
+            return d.key + "(" + Math.floor(d.value / all.value() * 100) + "%)";
+        });
+        
 
     // dateChart.width(500)
     //     .height(60)
@@ -87,11 +94,48 @@ d3.json('/findAll', function (data){
     //     //.alwaysUseRounding(true)
     //     .xUnits(d3.time.days);
 
+
+    /* DATA COUNT*/
 	dc.dataCount(".dc-data-count")
         .dimension(ndx)
         .group(all);
 
     dc.renderAll();
-    
-	//$("#rawData").text(JSON.stringify(data));
+
+
+    /*LEAFLET PLOTTED MAP*/
+    //create the map and start in London
+    var map = L.map('plotted-map').setView([51.505, -0.09], 2);
+
+    //add tile layer
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors',
+        maxZoom: 18
+    }).addTo(map);
+
+    data.forEach(function (d){
+        //make a new marker for each tweet and get the icon based on polarity
+        var marker = L.marker(d.tweet.geo.geo.coordinates, {icon: getIcon(d.polarity) }).addTo(map);
+    });
 });
+
+function getIcon(polarity){
+    if(polarity == 0){
+        return L.icon({
+            iconUrl: "/imgs/negative.png",
+            iconSize: [7, 7]
+        });
+    }
+    else if(polarity == 2){
+        return L.icon({
+            iconUrl: "/imgs/neutral.png",
+            iconSize: [7, 7]
+        });
+    }
+    else if(polarity == 4){
+        return L.icon({
+            iconUrl: "/imgs/positive.png",
+            iconSize: [7, 7]
+        });
+    }
+}

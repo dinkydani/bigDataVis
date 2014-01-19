@@ -4,8 +4,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>An Evaluation of Big Data Visualisation Techniques</title>
 
-  <link rel="stylesheet" href="resources/bootstrap.css" type="text/css">
+  <link rel="stylesheet" href="css/bootstrap.css" type="text/css">
   <link rel="stylesheet" href="css/dc.css" type="text/css">
+  <link rel="stylesheet" href="css/leaflet.css" type="text/css">
   <link rel="stylesheet" href="css/style.css" type="text/css">
 </head>
 
@@ -44,7 +45,6 @@
   <main class="container">
     <div id="charts">
       <h3>Subset of Twitter Data with Sentiment Analysis</h3>
-
       <div class="row">
         <div class="col-md-12">
           <div id="sentiment-chart" class="col-md-3 col-sm-4 col-xs-12">
@@ -73,6 +73,15 @@
           <span class="filter-count"></span> selected out of <span class="total-count"></span> tweets
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-md-12">
+          <strong>Leaflet Sentiment Map</strong>
+          <div id="plotted-map"></div>
+        </div>
+      </div>
+
+    </div>
         
 
 
@@ -93,6 +102,7 @@
   
   <script src="resources/d3.js"></script>
   <script src="resources/crossfilter.js"></script>
+  <script src="resources/leaflet.js"></script>
   <script src="resources/dc.js"></script>
   <script src="resources/jquery.js"></script>
   <script src="resources/bootstrap.js"></script>
