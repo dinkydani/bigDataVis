@@ -115,7 +115,12 @@ d3.json('/findAll', function (data){
 
     data.forEach(function (d){
         //make a new marker for each tweet and get the icon based on polarity
-        var marker = L.marker(d.tweet.geo.geo.coordinates, {icon: getIcon(d.polarity) }).addTo(map);
+        var marker = L.marker(d.tweet.geo.geo.coordinates, {icon: getIcon(d.polarity) });
+        marker.bindPopup(d.text);
+        marker.on('mouseover', function(e){
+            marker.openPopup();
+        });
+        marker.addTo(map);
     });
 });
 
