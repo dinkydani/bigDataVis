@@ -6,6 +6,10 @@ header{
 	text-align: center;
 }
 
+section{
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
 .dc-chart g.row text{
 	fill: black;
 }
@@ -14,7 +18,11 @@ header{
 	height: 500px;
 }
 
-#charts{
+#data-count{
+	text-align: left;
+}
+
+#main-content{
 	text-align: center;
 }
 

@@ -3,6 +3,8 @@ var sentimentChart = dc.pieChart("#sentiment-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
 var countryChart = dc.pieChart("#country-chart");
 
+var markers = [];
+
 d3.json('/findAll', function (data){
     console.log(data);
 	//create crossfilter dimensions and groups
@@ -124,26 +126,61 @@ d3.json('/findAll', function (data){
             marker.openPopup();
         });
         marker.addTo(map);
+        markers.push(marker);
     });
+
+    map.on("zoomend", function(){
+        //get the current zoom
+        var currentZoom = map.getZoom();
+        console.log(currentZoom);
+
+        //set this based on a value (placeholder 20, 20 for now for demo)
+        var newIconSize = [20,20];
+
+        for (var i = 0; i < markers.length; i++) {
+            //get the existing marker image
+            var url = markers[i].options.icon.options.iconUrl;
+            var newIcon = L.icon({
+                iconUrl: url,
+                iconSize: newIconSize
+            });
+            markers[i].setIcon(newIcon);
+        }
+    });
+    
 });
+
+function sizeFactor(zoom) {
+    if (zoom <= 8) return 0.3;
+    else if (zoom == 9) return 0.4;
+    else if (zoom == 10) return 0.5;
+    else if (zoom == 11) return 0.7;
+    else if (zoom == 12) return 0.85;
+    else if (zoom == 13) return 1.0;
+    else if (zoom == 14) return 1.3;
+    else if (zoom == 15) return 1.6;
+    else if (zoom == 16) return 1.9;
+    else // zoom >= 17
+    return 2.2;
+}
 
 function getIcon(polarity){
     if(polarity == 0){
         return L.icon({
             iconUrl: "/imgs/negative.png",
-            iconSize: [7, 7]
+            iconSize: [8, 8]
         });
     }
     else if(polarity == 2){
         return L.icon({
             iconUrl: "/imgs/neutral.png",
-            iconSize: [7, 7]
+            iconSize: [8, 8]
         });
     }
     else if(polarity == 4){
         return L.icon({
             iconUrl: "/imgs/positive.png",
-            iconSize: [7, 7]
+            iconSize: [8, 8]
         });
     }
 }
