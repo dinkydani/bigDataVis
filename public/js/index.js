@@ -208,7 +208,7 @@ d3.json('/findAll', function (data){
     infoPanel.update = function (properties) {
         this._div.innerHTML = '<h4>Number of Tweets</h4>' +  (properties ?
             '<b>' + properties.NAME + '</b><br />' + properties.tweetCount + ' tweets'
-            : 'Hover over a country');
+            : 'Click or hover on a country');
     };
 
     infoPanel.addTo(cMap);
