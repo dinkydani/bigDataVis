@@ -135,7 +135,8 @@ d3.json('/findAll', function (data){
         console.log(currentZoom);
 
         //set this based on a value (placeholder 20, 20 for now for demo)
-        var newIconSize = [20,20];
+        var size = currentZoom * 3;
+        var newIconSize = [size, size];
 
         for (var i = 0; i < markers.length; i++) {
             //get the existing marker image
@@ -149,20 +150,6 @@ d3.json('/findAll', function (data){
     });
     
 });
-
-function sizeFactor(zoom) {
-    if (zoom <= 8) return 0.3;
-    else if (zoom == 9) return 0.4;
-    else if (zoom == 10) return 0.5;
-    else if (zoom == 11) return 0.7;
-    else if (zoom == 12) return 0.85;
-    else if (zoom == 13) return 1.0;
-    else if (zoom == 14) return 1.3;
-    else if (zoom == 15) return 1.6;
-    else if (zoom == 16) return 1.9;
-    else // zoom >= 17
-    return 2.2;
-}
 
 function getIcon(polarity){
     if(polarity == 0){
