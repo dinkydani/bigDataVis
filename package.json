@@ -9,7 +9,6 @@
     "url": "https://github.com/dinkydani/finalYearProject"
   },
   "dependencies": {
-    "node" : "0.10.*",
     "express" : "3.3.8",
     "mongodb" : "1.3.*",
     "ntwitter" : "0.5.0",
