@@ -135,8 +135,6 @@ function getGeo(tweet, callback){
 		console.log(tweet.geo.place.country_code);
 		//if a tweet has geo and coordinates for mapping 
 		if(tweet.geo.geo){
-			console.log("Lat: " + tweet.geo.geo.coordinates[0]);
-			console.log("Lon: " + tweet.geo.geo.coordinates[1]);
 			//then it can be sent for sentiment analysis
 			callback(tweet);
 		}else{
