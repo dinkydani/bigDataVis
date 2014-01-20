@@ -237,7 +237,7 @@ d3.json('/findAll', function (data){
 function styleChoropleth(feature) {
     return {
         fillColor: getChoroplethColor(feature.properties.tweetCount),
-        weight: 2,
+        weight: 1.5,
         opacity: 1,
         color: 'white',
         dashArray: '3',
@@ -263,7 +263,7 @@ function highlightFeature(e) {
     var layer = e.target;
 
     layer.setStyle({
-        weight: 5,
+        weight: 3,
         color: '#666',
         dashArray: '',
         fillOpacity: 0.7
