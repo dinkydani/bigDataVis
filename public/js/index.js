@@ -282,6 +282,9 @@ function resetHighlight(e) {
 
 function onEachFeature(feature, layer) {
     layer.on({
+        click: function(){
+            infoPanel.update(layer.feature.properties);
+        },
         mouseover: highlightFeature,
         mouseout: resetHighlight,
     });
