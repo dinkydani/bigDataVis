@@ -255,7 +255,10 @@ d3.json('/findAll', function (data){
 
 
 
-
+    /*D3 CHOROPLETH MAP*/
+    var mapCountryDimension = ndx.dimension(function (d){
+        return d.tweet.geo.place.country_code;
+    });
     //setup the map
     var d3map = L.map('d3-map').setView([51.505, -0.09], 2);
 
@@ -274,19 +277,20 @@ d3.json('/findAll', function (data){
         bounds = path.bounds(countriesJson);
 
     // colour ramp, a range of colours red to blue using a scale from 0 to the max tweet count
-    var ramp = d3.scale.linear().domain([0,countryDimension.group().top(1)]).range(["red","blue"]);
+    var ramp = d3.scale.linear().domain([0,mapCountryDimension.group().top(1)]).range(["red","blue"]);
 
     feature = g.selectAll("path")
         .data(countriesJson.features)
         .enter().append("path")
         // default fill, we'll replace this later
         .style("fill", function (d){
-            redraw();      
+                  
         });      
 
     d3map.on("viewreset", reset);
     d3map.on("moveend", reset);
 
+    redraw();
     reset();
     
 
@@ -296,7 +300,8 @@ d3.json('/findAll', function (data){
     // call when the filter changes
     function redraw () {
         // group() returns the data currently left after the filter in applied elsewhere
-        var d = countryDimension.group().all();
+        var d = mapCountryDimension.group().all();
+        
         // this indexes the country by name so we can look it up later
         var indexed = {};
         for (var i = 0; i < d.length; i++) {
