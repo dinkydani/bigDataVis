@@ -1,4 +1,4 @@
-$("#overlay").show();
+//$("#overlay").show();
 
 
 var sentimentChart = dc.pieChart("#sentiment-chart");
@@ -269,17 +269,17 @@ d3.json('/findAll', function (data){
             return "Country: " + d.key + "\nTweets: " + tweets;
         });
 
-
-
-
     //last line
-    startRendering(function (){
-        $("#overlay").hide();
-    });
+    dc.renderAll();
+
+    
+    // startRendering(function (){
+    //     $("#overlay").hide();
+    // });
         
 });
 function startRendering(callback){
-    dc.renderAll();
+    
     callback();
 }
 function styleChoropleth(feature) {
