@@ -273,7 +273,6 @@ d3.json('/findAll', function (data){
         path = d3.geo.path().projection(transform),
         bounds = path.bounds(countriesJson);
 
-    console.log(countryDimension.group().top(1));
     // colour ramp, a range of colours red to blue using a scale from 0 to the max tweet count
     var ramp = d3.scale.linear().domain([0,countryDimension.group().top(1)]).range(["red","blue"]);
 
@@ -282,9 +281,7 @@ d3.json('/findAll', function (data){
         .enter().append("path")
         // default fill, we'll replace this later
         .style("fill", function (d){
-            var count = indexed[d.properties.ISO_A2];
-            // make a colour from the count and return that as the fill
-            return getChoroplethColorBlue(count);       
+            redraw();      
         });      
 
     d3map.on("viewreset", reset);
