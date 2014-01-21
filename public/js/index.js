@@ -10,7 +10,7 @@ var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
 //globals for choropleth map to work, TODO: workaround if possible
 var geojson, infoPanel;
 
-var d3map, bounds, path, feature, g;
+var d3map, bounds, path, feature, g, color;
 
 var markers = []; //markers array for handling map zoom
 var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -241,9 +241,6 @@ d3.json('/findAll', function (data){
 
 
     /*CHOROPLETH-CHART*/
-    // var countriesDimension = ndx.dimension(function (d){
-    //     return 
-    // });
     var choroplethDimension = ndx.dimension(function (d){
         return d.tweet.geo.place.country_code;
     });
@@ -254,8 +251,8 @@ d3.json('/findAll', function (data){
     choroplethChart
         .width(1000)
         .height(450)
-        .dimension(choroplethDimension)
-        .group(choroplethGroup)
+        .dimension(countryDimension)
+        .group(countryGroup)
         .projection(d3.geo.mercator()
             .scale(100)
             .center([0, 40]))
@@ -292,42 +289,22 @@ d3.json('/findAll', function (data){
     bounds = path.bounds(countriesJson);
 
     feature = g.selectAll("path")
-        .data(countriesJson.features)
-        .enter().append("path");
+        .data(countryGroup)
+        .enter().append("path")
+        .style("fill", function(d) {
+            return getChoroplethColorBlue(d.properties.tweetCount);
+        })
+        .on("click", function (d){
+            d.style
+        });
 
-    color = d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]);
 
+    //countryDimension & countryGroup
 
     d3map.on("viewreset", reset);
     d3map.on("moveend", reset);
+
     reset();
-
-
-    svg.selectAll("path")
-       .data(countriesJson.features)
-       .enter()
-       .append("path")
-       .attr("d", path)
-       .style("fill", function(d) {
-            console.log(d);
-           //Get data value
-           var value = d.properties.tweetCount;
-           
-           if (value && value !== 0) {
-                   //If value exists…
-                   return color(value);
-           } else {
-                   //If value is undefined or 0…
-                   return "#ccc";
-           }
-       });
-
-
-
-
-
-
-
     //last line
     dc.renderAll();
 
@@ -383,6 +360,16 @@ function getChoroplethColor(d) {
            d > choroplethGrades[1] ? '#FEB24C' :
            d > choroplethGrades[0] ? '#FED976' :
                                      '#FFEDA0';
+}
+function getChoroplethColorBlue(d){
+    return d > choroplethGrades[6] ? '#0061B5' :
+           d > choroplethGrades[5] ? '#1E96FF' :
+           d > choroplethGrades[4] ? '#36A2FF' :
+           d > choroplethGrades[3] ? '#51AEFF' :
+           d > choroplethGrades[2] ? '#81C5FF' :
+           d > choroplethGrades[1] ? '#9ED2FF' :
+           d > choroplethGrades[0] ? '#C4E4FF' :
+                                     '#ccc';
 }
 
 function highlightFeature(e) {

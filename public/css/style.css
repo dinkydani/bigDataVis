@@ -12,15 +12,13 @@ section{
 }
 
 #d3-map path{
-	fill: #000;
-	fill-opacity: .2;
+	fill-opacity: .7;
 	stroke: #fff;
 	stroke-width: 1.5px;
+	cursor: pointer;
 }
 #d3-map path:hover {
-	cursor: pointer;
-   	fill: #81C5FF;
-   	fill-opacity: 0.7;
+   	fill-opacity: .8;
 }
 
 .dc-chart g.row text{
