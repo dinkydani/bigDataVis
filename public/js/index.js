@@ -191,8 +191,7 @@ d3.json('/findAll', function (data){
     L.tileLayer(osmUrl, {
         attribution: attribText,
         minZoom: 1,
-        maxZoom: 16,
-        styleId: 22677
+        maxZoom: 16
     }).addTo(cMap);
 
     geojson = L.geoJson(countriesJson, {
