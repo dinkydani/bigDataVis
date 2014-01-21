@@ -11,8 +11,8 @@ var twit = new twitter({
 });
 
 /*mongo*/
-//var mongoUri = 'mongodb://localhost/finalyearproject';
-var mongoUri = 'mongodb://dinkydani:' + credentials.mongo_password + '@ds061238.mongolab.com:61238/heroku_app21304795';
+var mongoUri = 'mongodb://localhost/finalyearproject';
+//var mongoUri = 'mongodb://dinkydani:' + credentials.mongo_password + '@ds061238.mongolab.com:61238/heroku_app21304795';
 var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
@@ -74,7 +74,7 @@ function processTweet(data){
 	//get the sentiment for this tweet
 	getGeo(tweet, function(tweet, data){
 		getSentiment(tweet, function(data){
-		console.log("Got sentiment");
+		//console.log("Got sentiment");
 
 		//store tweets in mongo
 		db.insert(data, function(err, res){
@@ -131,16 +131,15 @@ function getSentiment(tweet, callback){
 function getGeo(tweet, callback){
 	//if a tweet has a place (country code)
 	if(tweet.geo.place){
-		console.log(tweet.geo.place.country_code);
 		//if a tweet has geo and coordinates for mapping 
 		if(tweet.geo.geo){
 			//then it can be sent for sentiment analysis
 			callback(tweet);
 		}else{
-			console.log("no geo tweet disposed");
+			//console.log("no geo tweet disposed");
 		}
 	} else{
-		console.log("no place tweet disposed");
+		//console.log("no place tweet disposed");
 	}
 }
 

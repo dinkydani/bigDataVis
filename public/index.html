@@ -42,7 +42,15 @@
     </div>
   </header>
 
+  <div id="overlay" style="display: none;">
+    <div id="loadinganimation">
+      <h3>Loading...</h3>
+      <img src="imgs/spinner.gif" alt="loading">
+    </div>
+  </div>
+
   <main id="main-content" class="container">
+
     <section id="charts">
       <h3>Subset of Twitter Data with Sentiment Analysis</h3>
       <div class="row">
@@ -78,11 +86,21 @@
     </section>
 
     <section id="maps" class="row">
-      <div class="col-md-12">
+      <div class="col-md-12 map"> 
+        <div id="choropleth-chart" class="col-md-12">
+          <strong>D3 Choropleth Chart</strong>
+          <a class="reset" href="javascript:choroplethChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+          <span class="reset" style="display: none"> | Current filter: <span class="filter"></span></span>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+
+      <div class="col-md-12 map">
         <strong>Leaflet Sentiment Map</strong>
         <div id="plotted-map"></div>
       </div>
-      <div class="col-md=12">
+
+      <div class="col-md=12 map">
         <strong>Leaflet Choropleth Map</strong>
         <div id="choropleth-map"></div>
       </div>
@@ -106,8 +124,9 @@
   
   <script src="resources/d3.js"></script>
   <script src="resources/crossfilter.js"></script>
-  <script src="resources/leaflet.js"></script>
   <script src="resources/dc.js"></script>
+  <script src="resources/leaflet.js"></script>
+
   <script src="resources/jquery.js"></script>
   <script src="resources/bootstrap.js"></script>
 

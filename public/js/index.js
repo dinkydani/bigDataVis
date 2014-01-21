@@ -1,7 +1,11 @@
+$("#overlay").show();
+
 
 var sentimentChart = dc.pieChart("#sentiment-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
 var countryChart = dc.pieChart("#country-chart");
+//var countryRowChart = dc.rowChart("#country-row-chart"); //TODO: long row chart down size for countries
+var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
 
 //globals for choropleth map to work, TODO: workaround if possible
 var geojson, infoPanel;
@@ -105,7 +109,7 @@ d3.json('/findAll', function (data){
         .dimension(ndx)
         .group(all);
 
-    dc.renderAll();
+    
 
 
     /*LEAFLET PLOTTED MAP*/
@@ -159,7 +163,7 @@ d3.json('/findAll', function (data){
     data.forEach(function (d){
         countryCounts.push({"code" : d.tweet.geo.place.country_code, "count" : 0});
     });
-    countries.features.forEach(function (d){
+    countriesJson.features.forEach(function (d){
         d.properties.tweetCount = 0;
     });
 
@@ -173,9 +177,9 @@ d3.json('/findAll', function (data){
 
 
     for (var i = 0; i < countryCounts.length; i++) {
-        for (var j = 0; j < countries.features.length; j++) {
-            if(countryCounts[i].code == countries.features[j].properties.ISO_A2){
-                countries.features[j].properties.tweetCount++;
+        for (var j = 0; j < countriesJson.features.length; j++) {
+            if(countryCounts[i].code == countriesJson.features[j].properties.ISO_A2){
+                countriesJson.features[j].properties.tweetCount++;
             }
         };
         
@@ -191,7 +195,7 @@ d3.json('/findAll', function (data){
         styleId: 22677
     }).addTo(cMap);
 
-    geojson = L.geoJson(countries, {
+    geojson = L.geoJson(countriesJson, {
         style: styleChoropleth,
         onEachFeature: onEachFeature
     }).addTo(cMap);
@@ -232,8 +236,52 @@ d3.json('/findAll', function (data){
 
     legend.addTo(cMap);
 
-});
 
+
+
+    /*CHOROPLETH-CHART*/
+    // var countriesDimension = ndx.dimension(function (d){
+    //     return 
+    // });
+    var choroplethDimension = ndx.dimension(function (d){
+        return d.tweet.geo.place.country_code;
+    });
+
+    var choroplethGroup = choroplethDimension.group();
+
+
+    choroplethChart
+        .width(1000)
+        .height(450)
+        .dimension(choroplethDimension)
+        .group(choroplethGroup)
+        .projection(d3.geo.mercator()
+            .scale(100)
+            .center([0, 40]))
+        .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
+        .colorDomain([0, 200])
+        .colorCalculator(function (d) { return d ? choroplethChart.colors()(d) : '#ccc'; })
+        .overlayGeoJson(countriesJson.features, "state", function (d) {
+            return d.properties.ISO_A2;
+        })
+        .title(function (d) {
+            var tweets = d.value ? d.value : 0;
+            return "Country: " + d.key + "\nTweets: " + tweets;
+        });
+
+
+
+
+    //last line
+    startRendering(function (){
+        $("#overlay").hide();
+    });
+        
+});
+function startRendering(callback){
+    dc.renderAll();
+    callback();
+}
 function styleChoropleth(feature) {
     return {
         fillColor: getChoroplethColor(feature.properties.tweetCount),

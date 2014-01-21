@@ -38,6 +38,34 @@ section{
     opacity: 0.7;
 }
 
+.map{
+	margin-top: 2em;
+	margin-bottom: 2em;
+}
+
+#overlay {
+  	position:fixed;
+	top:0px;
+	left:0px;
+	width: 100%;
+	height: 100%;
+	background-color:#ccc;
+	z-index:1020;
+}
+#loadinganimation img{
+	width: 120px;
+}
+#loadinganimation  {
+	
+	position:absolute;
+	top:50%;
+	left:50%;
+	background-color:#ccc;
+	z-index:1002;
+	overflow:auto;
+
+}
+
 #plotted-map{
 	height: 500px;
 }

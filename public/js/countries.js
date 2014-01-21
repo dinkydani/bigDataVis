@@ -1,4 +1,4 @@
-var countries = {
+var countriesJson = {
 "type": "FeatureCollection",
 "features": [
 { "type": "Feature", "id": 0, "properties": { "ScaleRank": 3, "LabelRank": 3, "FeatureCla": "Admin-0 countries", "SOVEREIGNT": "Netherlands", "SOV_A3": "NL1", "ADM0_DIF": 1.000000, "LEVEL": 2.000000, "TYPE": "Country", "ADMIN": "Aruba", "ADM0_A3": "ABW", "GEOU_DIF": 0.000000, "GEOUNIT": "Aruba", "GU_A3": "ABW", "SU_DIF": 0.000000, "SUBUNIT": "Aruba", "SU_A3": "ABW", "NAME": "Aruba", "ABBREV": "Aruba", "POSTAL": "AW", "NAME_FORMA": "", "TERR_": "Neth.", "NAME_SORT": "Aruba", "MAP_COLOR": 9.000000, "POP_EST": 103065.000000, "GDP_MD_EST": 2258.000000, "FIPS_10_": 0.000000, "ISO_A2": "AW", "ISO_A3": "ABW", "ISO_N3": 533.000000 }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -69.899139, 12.452005 ], [ -69.895676, 12.423015 ], [ -69.942159, 12.438518 ], [ -70.004145, 12.500503 ], [ -70.066131, 12.546986 ], [ -70.050861, 12.597087 ], [ -70.035125, 12.614114 ], [ -69.973139, 12.567631 ], [ -69.911799, 12.480479 ], [ -69.899139, 12.452005 ] ] ] } }
