@@ -289,7 +289,7 @@ d3.json('/findAll', function (data){
     bounds = path.bounds(countriesJson);
 
     feature = g.selectAll("path")
-        .data(countryGroup)
+        .data(countriesJson.features)
         .enter().append("path")
         .style("fill", function(d) {
             return getChoroplethColorBlue(d.properties.tweetCount);
