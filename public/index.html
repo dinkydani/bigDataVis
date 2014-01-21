@@ -87,10 +87,11 @@
 
     <section id="maps" class="row">
       <div class="col-md-12 map"> 
-        <div id="choropleth-chart" class="col-md-3 col-sm-4 col-xs-12">
+        <div id="choropleth-chart">
           <strong>D3 Choropleth Chart</strong>
+          
+          <span class="reset" style="display: none">Current filter: <span class="filter"></span> | </span>
           <a class="reset" href="javascript:choroplethChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-          <span class="reset" style="display: none"> | Current filter: <span class="filter"></span></span>
           <div class="clearfix"></div>
         </div>
       </div>
