@@ -7,11 +7,6 @@ var countryChart = dc.pieChart("#country-chart");
 //var countryRowChart = dc.rowChart("#country-row-chart"); //TODO: long row chart down size for countries?
 var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
 
-//globals for choropleth map to work, TODO: workaround if possible
-var geojson, infoPanel;
-
-var d3map, bounds, path, feature, g, color;
-
 var markers = []; //markers array for handling map zoom
 var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 var dateTimeFormat = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
@@ -49,9 +44,10 @@ d3.json('/findAll', function (data){
         .innerRadius(30)
         .dimension(sentimentDimension)
         .group(sentimentGroup)
-        .label(function (d){
+        .title(function (d){
             return d.key + "(" + Math.floor(d.value / all.value() * 100) + "%)";
-        });
+        })
+        .on("filtered", redraw);
     
 
 
@@ -70,8 +66,10 @@ d3.json('/findAll', function (data){
         .margins({top: 20, left: 10, right: 10, bottom: 20})
         .group(dayOfWeekGroup)
         .dimension(dayOfWeekDimension)
+        .on("filtered", redraw)
         .elasticX(true)
         .xAxis().ticks(4);
+        
 
 
 
@@ -90,7 +88,8 @@ d3.json('/findAll', function (data){
         .group(countryGroup)
         .title(function (d){
             return d.key + ": " + d.value + " (" + Math.floor(d.value / all.value() * 100) + "%)";
-        });
+        })
+        .on("filtered", redraw);
         
 
     // dateChart.width(500)
@@ -161,31 +160,15 @@ d3.json('/findAll', function (data){
 
     /*Choropleth Map*/
     //setup the data
-    //ISO_A2 is for the country code inside countries
-    data.forEach(function (d){
-        countryCounts.push({"code" : d.tweet.geo.place.country_code, "count" : 0});
-    });
-    countriesJson.features.forEach(function (d){
-        d.properties.tweetCount = 0;
-    });
-
-    for (var i = 0; i < data.length; i++) {
-        for (var j = 0; j < countryCounts.length; j++) {
-            if(data[i].tweet.geo.place.country_code == countryCounts[j].code){
-                countryCounts[j].count++;
-            }
-        };
-    };
-
-
-    for (var i = 0; i < countryCounts.length; i++) {
+    for (var i = 0; i < countryDimension.group().all().length; i++) {
         for (var j = 0; j < countriesJson.features.length; j++) {
-            if(countryCounts[i].code == countriesJson.features[j].properties.ISO_A2){
-                countriesJson.features[j].properties.tweetCount++;
+            if(countryDimension.group().all()[i].key == countriesJson.features[j].properties.ISO_A2){
+                countriesJson.features[j].properties.tweetCount = countryDimension.group().all()[i].value;
+                break;
             }
         };
-        
     };
+
 
     //setup the map
     var cMap = L.map('choropleth-map').setView([51.505, -0.09], 2);
@@ -196,12 +179,12 @@ d3.json('/findAll', function (data){
         maxZoom: 16
     }).addTo(cMap);
 
-    geojson = L.geoJson(countriesJson, {
+    var geojson = L.geoJson(countriesJson, {
         style: styleChoropleth,
         onEachFeature: onEachFeature
     }).addTo(cMap);
 
-    infoPanel = L.control();
+    var infoPanel = L.control();
 
     infoPanel.onAdd = function (map) {
         this._div = L.DomUtil.create('div', 'infoPanel'); // create a div with a class "infoPanel"
@@ -251,8 +234,8 @@ d3.json('/findAll', function (data){
     choroplethChart
         .width(1000)
         .height(450)
-        .dimension(countryDimension)
-        .group(countryGroup)
+        .dimension(choroplethDimension)
+        .group(choroplethGroup)
         .projection(d3.geo.mercator()
             .scale(100)
             .center([0, 40]))
@@ -269,10 +252,12 @@ d3.json('/findAll', function (data){
 
 
 
-    
+
+
+
 
     //setup the map
-    d3map = L.map('d3-map').setView([51.505, -0.09], 2);
+    var d3map = L.map('d3-map').setView([51.505, -0.09], 2);
 
     L.tileLayer(osmUrl, {
         attribution: attribText,
@@ -281,126 +266,158 @@ d3.json('/findAll', function (data){
     }).addTo(d3map);
 
 
-    svg = d3.select(d3map.getPanes().overlayPane).append("svg"),
-    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+    var svg = d3.select(d3map.getPanes().overlayPane).append("svg"),
+        g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-    transform = d3.geo.transform({point: projectPoint}),
-    path = d3.geo.path().projection(transform),
-    bounds = path.bounds(countriesJson);
+    var transform = d3.geo.transform({point: projectPoint}),
+        path = d3.geo.path().projection(transform),
+        bounds = path.bounds(countriesJson);
+
+    console.log(countryDimension.group().top(1));
+    // colour ramp, a range of colours red to blue using a scale from 0 to the max tweet count
+    var ramp = d3.scale.linear().domain([0,countryDimension.group().top(1)]).range(["red","blue"]);
 
     feature = g.selectAll("path")
         .data(countriesJson.features)
         .enter().append("path")
-        .style("fill", function(d) {
-            return getChoroplethColorBlue(d.properties.tweetCount);
-        })
-        .on("click", function (d){
-            d.style
-        });
-
-
-    //countryDimension & countryGroup
+        // default fill, we'll replace this later
+        .style("fill", function (d){
+            var count = indexed[d.properties.ISO_A2];
+            // make a colour from the count and return that as the fill
+            return getChoroplethColorBlue(count);       
+        });      
 
     d3map.on("viewreset", reset);
     d3map.on("moveend", reset);
 
     reset();
-    //last line
-    dc.renderAll();
+    
+
 
     
+
+    // call when the filter changes
+    function redraw () {
+        // group() returns the data currently left after the filter in applied elsewhere
+        var d = countryDimension.group().all();
+        // this indexes the country by name so we can look it up later
+        var indexed = {};
+        for (var i = 0; i < d.length; i++) {
+          indexed[d[i].key] = d[i].value;
+        }
+      
+      // select all the country paths again
+      g.selectAll('path')
+        .style('fill', function (d) {
+            // this time look up the tweet count from the indexed cf group
+              
+            var count = indexed[d.properties.ISO_A2];
+            // make a colour from the count and return that as the fill
+            return getChoroplethColorBlue(count);       
+        })
+    }
+
+    function projectPoint(x, y) {
+        var point = d3map.latLngToLayerPoint(new L.LatLng(y, x));
+        this.stream.point(point.x, point.y);
+    }
+
+    // Reposition the SVG to cover the features.
+    function reset() {
+        var topLeft = bounds[0],
+            bottomRight = bounds[1];
+
+        svg.attr("width", bottomRight[0] - topLeft[0])
+           .attr("height", bottomRight[1] - topLeft[1])
+           .style("left", topLeft[0] + "px")
+           .style("top", topLeft[1] + "px");
+
+        g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
+        feature.attr("d", path);
+    }
+
+    
+    function styleChoropleth(feature) {
+        return {
+            fillColor: getChoroplethColor(feature.properties.tweetCount),
+            weight: 1.5,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.7
+        };
+    }
+
+    function getChoroplethColor(d) {
+        //TODO: adjust the colours and decide values
+        //Math.floor(d.value / all.value() * 100)
+
+        return d > choroplethGrades[6] ? '#800026' :
+               d > choroplethGrades[5] ? '#BD0026' :
+               d > choroplethGrades[4] ? '#E31A1C' :
+               d > choroplethGrades[3] ? '#FC4E2A' :
+               d > choroplethGrades[2] ? '#FD8D3C' :
+               d > choroplethGrades[1] ? '#FEB24C' :
+               d > choroplethGrades[0] ? '#FED976' :
+                                         '#FFEDA0';
+    }
+    function getChoroplethColorBlue(d){
+        return d > choroplethGrades[6] ? '#0061B5' :
+               d > choroplethGrades[5] ? '#1E96FF' :
+               d > choroplethGrades[4] ? '#36A2FF' :
+               d > choroplethGrades[3] ? '#51AEFF' :
+               d > choroplethGrades[2] ? '#81C5FF' :
+               d > choroplethGrades[1] ? '#9ED2FF' :
+               d > choroplethGrades[0] ? '#C4E4FF' :
+                                         '#ccc';
+    }
+
+    function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+            weight: 3,
+            color: '#666',
+            dashArray: '',
+            fillOpacity: 0.7
+        });
+
+        if (!L.Browser.ie && !L.Browser.opera) {
+            layer.bringToFront();
+        }
+        infoPanel.update(layer.feature.properties);
+    }
+
+    function resetHighlight(e) {
+        geojson.resetStyle(e.target);
+        infoPanel.update();
+    }
+
+    function onEachFeature(feature, layer) {
+        layer.on({
+            click: function(){
+                infoPanel.update(layer.feature.properties);
+            },
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+        });
+    }
+
+
+
     // startRendering(function (){
     //     $("#overlay").hide();
     // });
+
+
+
+    //last line
+    dc.renderAll();
         
 });
-function projectPoint(x, y) {
-    var point = d3map.latLngToLayerPoint(new L.LatLng(y, x));
-    this.stream.point(point.x, point.y);
-}
-// Reposition the SVG to cover the features.
-function reset() {
-    var topLeft = bounds[0],
-        bottomRight = bounds[1];
-
-    svg.attr("width", bottomRight[0] - topLeft[0])
-       .attr("height", bottomRight[1] - topLeft[1])
-       .style("left", topLeft[0] + "px")
-       .style("top", topLeft[1] + "px");
-
-    g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
-
-    feature.attr("d", path);
-}
-
-function startRendering(callback){
-    
+function startRendering(callback){ 
     callback();
-}
-function styleChoropleth(feature) {
-    return {
-        fillColor: getChoroplethColor(feature.properties.tweetCount),
-        weight: 1.5,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.7
-    };
-}
-
-function getChoroplethColor(d) {
-    //TODO: adjust the colours and decide values
-    //Math.floor(d.value / all.value() * 100)
-
-    return d > choroplethGrades[6] ? '#800026' :
-           d > choroplethGrades[5] ? '#BD0026' :
-           d > choroplethGrades[4] ? '#E31A1C' :
-           d > choroplethGrades[3] ? '#FC4E2A' :
-           d > choroplethGrades[2] ? '#FD8D3C' :
-           d > choroplethGrades[1] ? '#FEB24C' :
-           d > choroplethGrades[0] ? '#FED976' :
-                                     '#FFEDA0';
-}
-function getChoroplethColorBlue(d){
-    return d > choroplethGrades[6] ? '#0061B5' :
-           d > choroplethGrades[5] ? '#1E96FF' :
-           d > choroplethGrades[4] ? '#36A2FF' :
-           d > choroplethGrades[3] ? '#51AEFF' :
-           d > choroplethGrades[2] ? '#81C5FF' :
-           d > choroplethGrades[1] ? '#9ED2FF' :
-           d > choroplethGrades[0] ? '#C4E4FF' :
-                                     '#ccc';
-}
-
-function highlightFeature(e) {
-    var layer = e.target;
-
-    layer.setStyle({
-        weight: 3,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-
-    if (!L.Browser.ie && !L.Browser.opera) {
-        layer.bringToFront();
-    }
-    infoPanel.update(layer.feature.properties);
-}
-
-function resetHighlight(e) {
-    geojson.resetStyle(e.target);
-    infoPanel.update();
-}
-
-function onEachFeature(feature, layer) {
-    layer.on({
-        click: function(){
-            infoPanel.update(layer.feature.properties);
-        },
-        mouseover: highlightFeature,
-        mouseout: resetHighlight,
-    });
 }
 
 //returns the correct icon depending on polarity
