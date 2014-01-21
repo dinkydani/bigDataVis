@@ -4,11 +4,13 @@
 var sentimentChart = dc.pieChart("#sentiment-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
 var countryChart = dc.pieChart("#country-chart");
-//var countryRowChart = dc.rowChart("#country-row-chart"); //TODO: long row chart down size for countries
+//var countryRowChart = dc.rowChart("#country-row-chart"); //TODO: long row chart down size for countries?
 var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
 
 //globals for choropleth map to work, TODO: workaround if possible
 var geojson, infoPanel;
+
+var d3map, bounds, path, feature, g;
 
 var markers = []; //markers array for handling map zoom
 var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
@@ -268,6 +270,64 @@ d3.json('/findAll', function (data){
             return "Country: " + d.key + "\nTweets: " + tweets;
         });
 
+
+
+    
+
+    //setup the map
+    d3map = L.map('d3-map').setView([51.505, -0.09], 2);
+
+    L.tileLayer(osmUrl, {
+        attribution: attribText,
+        minZoom: 1,
+        maxZoom: 16
+    }).addTo(d3map);
+
+
+    svg = d3.select(d3map.getPanes().overlayPane).append("svg"),
+    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+
+    transform = d3.geo.transform({point: projectPoint}),
+    path = d3.geo.path().projection(transform),
+    bounds = path.bounds(countriesJson);
+
+    feature = g.selectAll("path")
+        .data(countriesJson.features)
+        .enter().append("path");
+
+    color = d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]);
+
+
+    d3map.on("viewreset", reset);
+    d3map.on("moveend", reset);
+    reset();
+
+
+    svg.selectAll("path")
+       .data(countriesJson.features)
+       .enter()
+       .append("path")
+       .attr("d", path)
+       .style("fill", function(d) {
+            console.log(d);
+           //Get data value
+           var value = d.properties.tweetCount;
+           
+           if (value && value !== 0) {
+                   //If value exists…
+                   return color(value);
+           } else {
+                   //If value is undefined or 0…
+                   return "#ccc";
+           }
+       });
+
+
+
+
+
+
+
     //last line
     dc.renderAll();
 
@@ -277,6 +337,25 @@ d3.json('/findAll', function (data){
     // });
         
 });
+function projectPoint(x, y) {
+    var point = d3map.latLngToLayerPoint(new L.LatLng(y, x));
+    this.stream.point(point.x, point.y);
+}
+// Reposition the SVG to cover the features.
+function reset() {
+    var topLeft = bounds[0],
+        bottomRight = bounds[1];
+
+    svg.attr("width", bottomRight[0] - topLeft[0])
+       .attr("height", bottomRight[1] - topLeft[1])
+       .style("left", topLeft[0] + "px")
+       .style("top", topLeft[1] + "px");
+
+    g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+
+    feature.attr("d", path);
+}
+
 function startRendering(callback){
     
     callback();
