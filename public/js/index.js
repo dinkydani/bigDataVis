@@ -9,6 +9,9 @@ var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
 
 var markers = []; //markers array for handling map zoom
 var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+//var coloursBlue = ['#084594', '#2171b5', '#4292c6', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff']; //darkest to lightest
+var coloursBlue = ['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#dadaeb', '#c6dbef', '#eff3ff']; //first 5 default dc.js colours
+
 var dateTimeFormat = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
 
 var countryCounts = [];
@@ -66,6 +69,7 @@ d3.json('/findAll', function (data){
         .margins({top: 20, left: 10, right: 10, bottom: 20})
         .group(dayOfWeekGroup)
         .dimension(dayOfWeekDimension)
+        .ordinalColors(coloursBlue)
         .on("filtered", redraw)
         .elasticX(true)
         .xAxis().ticks(4);
@@ -308,14 +312,13 @@ d3.json('/findAll', function (data){
           indexed[d[i].key] = d[i].value;
         }
       
-      // select all the country paths again
-      g.selectAll('path')
-        .style('fill', function (d) {
-            // this time look up the tweet count from the indexed cf group
-              
-            var count = indexed[d.properties.ISO_A2];
-            // make a colour from the count and return that as the fill
-            return getChoroplethColorBlue(count);       
+        // select all the country paths again
+        g.selectAll('path')
+            .style('fill', function (d) {
+                // this time look up the tweet count from the indexed cf group
+                var count = indexed[d.properties.ISO_A2];
+                // make a colour from the count and return that as the fill
+                return getChoroplethColorBlue(count);       
         })
     }
 
