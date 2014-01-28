@@ -39,7 +39,7 @@ d3.json('/findAll', function (data){
 
     //Create a pie chart and use the given css selector as anchor.
     //You can also specify an optional chart group for this chart to be scoped within.
-    //When a chart belongs to a specific group then any interaction with such chart will only trigger redraw on other charts
+    //When a chart belongs to a specific group then any interaction with such chart will only trigger redrawSVG on other charts
     //within the same chart group.
     sentimentChart.width(180)
         .height(180)
@@ -50,7 +50,7 @@ d3.json('/findAll', function (data){
         .title(function (d){
             return d.key + "(" + Math.floor(d.value / all.value() * 100) + "%)";
         })
-        .on("filtered", redraw);
+        .on("filtered", redrawSVG);
     
 
 
@@ -70,7 +70,7 @@ d3.json('/findAll', function (data){
         .group(dayOfWeekGroup)
         .dimension(dayOfWeekDimension)
         .ordinalColors(coloursBlue)
-        .on("filtered", redraw)
+        .on("filtered", redrawSVG)
         .elasticX(true)
         .xAxis().ticks(4);
         
@@ -93,7 +93,7 @@ d3.json('/findAll', function (data){
         .title(function (d){
             return d.key + ": " + d.value + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
-        .on("filtered", redraw);
+        .on("filtered", redrawSVG);
         
 
     // dateChart.width(500)
@@ -227,7 +227,7 @@ d3.json('/findAll', function (data){
 
 
 
-    /*CHOROPLETH-CHART*/
+    /*DC.js CHOROPLETH-CHART*/
     var choroplethDimension = ndx.dimension(function (d){
         return d.tweet.geo.place.country_code;
     });
@@ -259,7 +259,9 @@ d3.json('/findAll', function (data){
 
 
 
-    /*D3 CHOROPLETH MAP*/
+
+
+    /*D3 & Leaflet CHOROPLETH MAP*/
     var mapCountryDimension = ndx.dimension(function (d){
         return d.tweet.geo.place.country_code;
     });
@@ -281,28 +283,80 @@ d3.json('/findAll', function (data){
         bounds = path.bounds(countriesJson);
 
     // colour ramp, a range of colours red to blue using a scale from 0 to the max tweet count
-    var ramp = d3.scale.linear().domain([0,mapCountryDimension.group().top(1)]).range(["red","blue"]);
+    //var ramp = d3.scale.linear().domain([0,mapCountryDimension.group().top(1)]).range(["red","blue"]);
+    var centered;
 
     feature = g.selectAll("path")
         .data(countriesJson.features)
         .enter().append("path")
-        // default fill, we'll replace this later
-        .style("fill", function (d){
+        .on("click", countryClicked);
+        // default fill
+        // .style("fill", function (d){
                   
-        });      
+        // });      
 
-    d3map.on("viewreset", reset);
-    d3map.on("moveend", reset);
+    d3map.on("viewreset", resetSVG);
+    d3map.on("moveend", resetSVG);
 
-    redraw();
-    reset();
+    redrawSVG();
+    resetSVG();
     
 
 
-    
+    var selectedCountries = [];
+
+    function countryClicked(country){
+        //check if the country is already selected
+        var inArray = false;
+        for (var i = 0; i < selectedCountries.length; i++) {
+            if(selectedCountries[i] === country){
+                inArray = true;
+                selectedCountries.splice(i, 1); 
+            }
+        }
+        if(!inArray){
+            selectedCountries.push(country);
+
+        }
+
+        console.log(selectedCountries);
+
+        //set all the countries to default grey
+        g.selectAll("path")
+            .style("fill", "#ccc");
+
+        //set the index for reference later
+        var d = mapCountryDimension.group().all();
+
+        var indexed = {};
+        for (var i = 0; i < d.length; i++) {
+            indexed[d[i].key] = d[i].value;
+        }
+
+        //filter the path based on the clicked country
+        g.selectAll("path")
+            // .filter(function (d){
+            //     return country == d;
+            // })
+            .style('fill', function (d) {
+                //style the selected countries
+                var count;
+                for (var i = 0; i < selectedCountries.length; i++) {
+                    if(selectedCountries[i] === d){
+                        // this time look up the tweet count from the indexed cf group
+                        count = indexed[d.properties.ISO_A2];
+                        // make a colour from the count and return that as the fill
+                        
+                    }
+                    return getChoroplethColorBlue(count);
+                }
+                
+            });
+
+    }
 
     // call when the filter changes
-    function redraw () {
+    function redrawSVG () {
         // group() returns the data currently left after the filter in applied elsewhere
         var d = mapCountryDimension.group().all();
         
@@ -328,7 +382,7 @@ d3.json('/findAll', function (data){
     }
 
     // Reposition the SVG to cover the features.
-    function reset() {
+    function resetSVG() {
         var topLeft = bounds[0],
             bottomRight = bounds[1];
 
