@@ -349,7 +349,7 @@ d3.json('/findAll', function (data){
                 });
 
             //mapCountryDimension.filter(selectedCountries);
-            var query = [{"key":"AT"}, {"key":"US"}];
+            //var query = [{"key":"AT"}, {"key":"US"}];
 
             var f = mapFilterDimension.filter(function(d) {
                 for (var i = 0; i < selectedCountries.length; i++) { 
@@ -358,6 +358,8 @@ d3.json('/findAll', function (data){
             });
 
             console.log(f.top(Infinity));
+
+            redrawAll();
 
         } else {
             redrawSVG();
