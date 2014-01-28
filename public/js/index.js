@@ -346,9 +346,9 @@ d3.json('/findAll', function (data){
                         // this time look up the tweet count from the indexed cf group
                         count = indexed[d.properties.ISO_A2];
                         // make a colour from the count and return that as the fill
-                        
+                        return getChoroplethColorBlue(count);
                     }
-                    return getChoroplethColorBlue(count);
+                    
                 }
                 
             });
