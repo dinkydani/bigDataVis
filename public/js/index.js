@@ -308,50 +308,47 @@ d3.json('/findAll', function (data){
     function countryClicked(country){
         //check if the country is already selected
         var inArray = false;
-        for (var i = 0; i < selectedCountries.length; i++) {
-            if(selectedCountries[i] === country){
-                inArray = true;
-                selectedCountries.splice(i, 1); 
-            }
+
+        if (selectedCountries.indexOf(country) > -1) {
+            inArray = true;
+            selectedCountries.splice(selectedCountries.indexOf(country), 1); 
         }
+
         if(!inArray){
             selectedCountries.push(country);
-
         }
 
-        console.log(selectedCountries);
+        if(selectedCountries.length > 0){
+            //set all the countries to default grey
+            g.selectAll("path")
+                .style("fill", "#ccc");
 
-        //set all the countries to default grey
-        g.selectAll("path")
-            .style("fill", "#ccc");
+            //set the index for reference later
+            var d = mapCountryDimension.group().all();
 
-        //set the index for reference later
-        var d = mapCountryDimension.group().all();
+            var indexed = {};
+            for (var i = 0; i < d.length; i++) {
+                indexed[d[i].key] = d[i].value;
+            }
 
-        var indexed = {};
-        for (var i = 0; i < d.length; i++) {
-            indexed[d[i].key] = d[i].value;
-        }
-
-        //filter the path based on the clicked country
-        g.selectAll("path")
-            // .filter(function (d){
-            //     return country == d;
-            // })
-            .style('fill', function (d) {
-                //style the selected countries
-                var count = 0;
-                for (var i = 0; i < selectedCountries.length; i++) {
-                    if(selectedCountries[i] === d){
-                        // this time look up the tweet count from the indexed cf group
-                        count = indexed[d.properties.ISO_A2];
-                        // make a colour from the count and return that as the fill
-                        
+            //filter the path based on the clicked country
+            g.selectAll("path")
+                // .filter(function (d){
+                //     return country == d;
+                // })
+                .style('fill', function (d) {
+                    if (selectedCountries.indexOf(d) > -1) {
+                      return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
+                    else { 
+                      return '#ccc';
                     }
-                    return getChoroplethColorBlue(count);
-                }
-                
-            });
+                });
+
+            mapCountryDimension.filter(selectedCountries);
+
+        } else {
+            redrawSVG();
+        }
 
     }
 
