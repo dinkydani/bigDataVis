@@ -24,6 +24,8 @@ d3.json('/findAll', function (data){
 
 
 
+
+
     /*SENTIMENT CHART*/
     //summarize sentiment by polarity
     var sentimentDimension = ndx.dimension(function (d) {
@@ -265,6 +267,7 @@ d3.json('/findAll', function (data){
     var mapCountryDimension = ndx.dimension(function (d){
         return d.tweet.geo.place.country_code;
     });
+
     //setup the map
     var d3map = L.map('d3-map').setView([51.505, -0.09], 2);
 
@@ -284,7 +287,6 @@ d3.json('/findAll', function (data){
 
     // colour ramp, a range of colours red to blue using a scale from 0 to the max tweet count
     //var ramp = d3.scale.linear().domain([0,mapCountryDimension.group().top(1)]).range(["red","blue"]);
-    var centered;
 
     feature = g.selectAll("path")
         .data(countriesJson.features)
@@ -302,7 +304,9 @@ d3.json('/findAll', function (data){
     resetSVG();
     
 
-
+    var mapFilterDimension = ndx.dimension(function (d){
+        return d.tweet.geo.place.country_code;
+    });
     var selectedCountries = [];
 
     function countryClicked(country){
@@ -344,7 +348,16 @@ d3.json('/findAll', function (data){
                     }
                 });
 
-            mapCountryDimension.filter(selectedCountries);
+            //mapCountryDimension.filter(selectedCountries);
+            var query = [{"key":"AT"}, {"key":"US"}];
+
+            var f = mapFilterDimension.filter(function(d) {
+                for (var i = 0; i < selectedCountries.length; i++) { 
+                    return selectedCountries[i].properties.ISO_A2 === d;
+                }
+            });
+
+            console.log(f.top(Infinity));
 
         } else {
             redrawSVG();
@@ -356,7 +369,7 @@ d3.json('/findAll', function (data){
     function redrawSVG () {
         // group() returns the data currently left after the filter in applied elsewhere
         var d = mapCountryDimension.group().all();
-        
+
         // this indexes the country by name so we can look it up later
         var indexed = {};
         for (var i = 0; i < d.length; i++) {
