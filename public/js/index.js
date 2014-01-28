@@ -1,5 +1,6 @@
 //$("#overlay").show();
 
+// var index = (function (global){
 
 var sentimentChart = dc.pieChart("#sentiment-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
@@ -348,18 +349,17 @@ d3.json('/findAll', function (data){
                     }
                 });
 
-            //mapCountryDimension.filter(selectedCountries);
-            //var query = [{"key":"AT"}, {"key":"US"}];
+            //mapFilterDimension.filterAll();
 
-            var f = mapFilterDimension.filter(function(d) {
+            mapCountryDimension.filter(function(d) {
                 for (var i = 0; i < selectedCountries.length; i++) { 
-                    return selectedCountries[i].properties.ISO_A2 === d;
+                    if(selectedCountries[i].properties.ISO_A2 === d){
+                        return d;
+                    }
                 }
             });
 
-            console.log(f.top(Infinity));
-
-            redrawAll();
+            dc.redrawAll();
 
         } else {
             redrawSVG();
@@ -512,3 +512,5 @@ function getIcon(polarity){
         });
     }
 }
+
+// }(window))
