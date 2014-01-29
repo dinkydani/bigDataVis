@@ -26,7 +26,6 @@ d3.json('/findAll', function (data){
 
 
 
-
     /*SENTIMENT CHART*/
     //summarize sentiment by polarity
     var sentimentDimension = ndx.dimension(function (d) {
@@ -110,6 +109,38 @@ d3.json('/findAll', function (data){
     //     //.round(d3.time.month.round)
     //     //.alwaysUseRounding(true)
     //     .xUnits(d3.time.days);
+
+    /*DC.js CHOROPLETH-CHART*/
+    var choroplethDimension = ndx.dimension(function (d){
+        return d.tweet.geo.place.country_code;
+    });
+
+    var choroplethGroup = choroplethDimension.group();
+
+    choroplethChart
+        .width(1000)
+        .height(450)
+        .dimension(choroplethDimension)
+        .group(choroplethGroup)
+        .on("filtered", redrawSVG)
+        .projection(d3.geo.mercator()
+            .scale(100)
+            .center([0, 40]))
+        .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
+        .colorDomain([0, 200])
+        .colorCalculator(function (d) { return d ? choroplethChart.colors()(d) : '#ccc'; })
+        .overlayGeoJson(countriesJson.features, "state", function (d) {
+            return d.properties.ISO_A2;
+        })
+        .title(function (d) {
+            var tweets = d.value ? d.value : 0;
+            return "Country: " + d.key + "\nTweets: " + tweets;
+        });
+
+
+
+
+
 
 
     /* DATA COUNT*/
@@ -230,35 +261,6 @@ d3.json('/findAll', function (data){
 
 
 
-    /*DC.js CHOROPLETH-CHART*/
-    var choroplethDimension = ndx.dimension(function (d){
-        return d.tweet.geo.place.country_code;
-    });
-
-    var choroplethGroup = choroplethDimension.group();
-
-
-    choroplethChart
-        .width(1000)
-        .height(450)
-        .dimension(choroplethDimension)
-        .group(choroplethGroup)
-        .projection(d3.geo.mercator()
-            .scale(100)
-            .center([0, 40]))
-        .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
-        .colorDomain([0, 200])
-        .colorCalculator(function (d) { return d ? choroplethChart.colors()(d) : '#ccc'; })
-        .overlayGeoJson(countriesJson.features, "state", function (d) {
-            return d.properties.ISO_A2;
-        })
-        .title(function (d) {
-            var tweets = d.value ? d.value : 0;
-            return "Country: " + d.key + "\nTweets: " + tweets;
-        });
-
-
-
 
 
 
@@ -326,7 +328,7 @@ d3.json('/findAll', function (data){
         if(selectedCountries.length > 0){
             //set all the countries to default grey
             g.selectAll("path")
-                .style("fill", "#ccc");
+                .style("fill", "#E3E3E3");
 
             //set the index for reference later
             var d = mapCountryDimension.group().all();
@@ -338,30 +340,27 @@ d3.json('/findAll', function (data){
 
             //filter the path based on the clicked country
             g.selectAll("path")
-                // .filter(function (d){
-                //     return country == d;
-                // })
                 .style('fill', function (d) {
                     if (selectedCountries.indexOf(d) > -1) {
                       return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
                     else { 
-                      return '#ccc';
+                      return '#E3E3E3';
                     }
                 });
 
-            //mapFilterDimension.filterAll();
-
             mapCountryDimension.filter(function(d) {
                 for (var i = 0; i < selectedCountries.length; i++) { 
-                    if(selectedCountries[i].properties.ISO_A2 === d){
-                        return d;
-                    }
+                    return selectedCountries[i].properties.ISO_A2 === d;
                 }
             });
 
             dc.redrawAll();
 
         } else {
+            //clear all the map filters and redraw the map as no countries are selected
+            mapCountryDimension.filterAll();
+            mapFilterDimension.filterAll();
+            dc.redrawAll();
             redrawSVG();
         }
 
