@@ -2,10 +2,12 @@
 
 // var index = (function (global){
 
+//     var index = function(){
+
+//charts
 var sentimentChart = dc.pieChart("#sentiment-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
 var countryChart = dc.pieChart("#country-chart");
-//var countryRowChart = dc.rowChart("#country-row-chart"); //TODO: long row chart down size for countries?
 var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
 
 var markers = []; //markers array for handling map zoom
@@ -15,8 +17,9 @@ var coloursBlue = ['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#dadaeb', '#c6db
 
 var dateTimeFormat = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
 
-var countryCounts = [];
 var choroplethGrades = [0, 10, 20, 50, 100, 200, 500, 1000];
+
+var selectedCountries = []; //array of countries selected on the map
 
 d3.json('/findAll', function (data){
 	//create crossfilter dimensions and groups
@@ -95,7 +98,13 @@ d3.json('/findAll', function (data){
         .title(function (d){
             return d.key + ": " + d.value + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
-        .on("filtered", redrawSVG);
+        .on("filtered", function (chart, filter){
+            //filter var contains the country code that has been selected or unselected
+            //or null when reset is pressed
+            console.log(filter);
+
+            redrawSVG(filter);
+        });
         
 
     // dateChart.width(500)
@@ -294,11 +303,7 @@ d3.json('/findAll', function (data){
     feature = g.selectAll("path")
         .data(countriesJson.features)
         .enter().append("path")
-        .on("click", countryClicked);
-        // default fill
-        // .style("fill", function (d){
-                  
-        // });      
+        .on("click", countryClicked);   
 
     d3map.on("viewreset", resetSVG);
     d3map.on("moveend", resetSVG);
@@ -307,10 +312,7 @@ d3.json('/findAll', function (data){
     resetSVG();
     
 
-    var mapFilterDimension = ndx.dimension(function (d){
-        return d.tweet.geo.place.country_code;
-    });
-    var selectedCountries = [];
+    
 
     function countryClicked(country){
         //check if the country is already selected
@@ -330,6 +332,14 @@ d3.json('/findAll', function (data){
             g.selectAll("path")
                 .style("fill", "#E3E3E3");
 
+            mapCountryDimension.filterAll();
+
+            mapCountryDimension.filter(function(d) {
+                for (var i = 0; i < selectedCountries.length; i++) { 
+                    return selectedCountries[i].properties.ISO_A2 === d;
+                }
+            });
+
             //set the index for reference later
             var d = mapCountryDimension.group().all();
 
@@ -348,18 +358,15 @@ d3.json('/findAll', function (data){
                     }
                 });
 
-            mapCountryDimension.filter(function(d) {
-                for (var i = 0; i < selectedCountries.length; i++) { 
-                    return selectedCountries[i].properties.ISO_A2 === d;
-                }
-            });
-
+            
             dc.redrawAll();
 
         } else {
             //clear all the map filters and redraw the map as no countries are selected
+            countryDimension.filterAll();
             mapCountryDimension.filterAll();
-            mapFilterDimension.filterAll();
+            countryChart.filterAll();
+
             dc.redrawAll();
             redrawSVG();
         }
@@ -367,7 +374,19 @@ d3.json('/findAll', function (data){
     }
 
     // call when the filter changes
-    function redrawSVG () {
+    function redrawSVG (filter) {
+        // var country;
+        // console.log(typeof filter);
+        // if(filter !== undefined){
+        //     if(filter !== null){
+        //         if(typeof filter === 'string'){
+        //             //the filter is a country name
+        //             country = true;
+        //         }
+        //     } else {
+        //         selectedCountries = []; //clear the countries as reset has been clicked
+        //     }
+        // }
         // group() returns the data currently left after the filter in applied elsewhere
         var d = mapCountryDimension.group().all();
 
@@ -380,6 +399,22 @@ d3.json('/findAll', function (data){
         // select all the country paths again
         g.selectAll('path')
             .style('fill', function (d) {
+                // if(country){
+                //     if(filter === d.properties.ISO_A2){
+                //         //check if the country is already selected
+                //         var inArray = false;
+
+                //         if (selectedCountries.indexOf(d) > -1) {
+                //             inArray = true;
+                //             selectedCountries.splice(selectedCountries.indexOf(d), 1); 
+                //         }
+
+                //         if(!inArray){
+                //             selectedCountries.push(d);
+                //         }
+                //         console.log(selectedCountries);
+                //     }
+                // }
                 // this time look up the tweet count from the indexed cf group
                 var count = indexed[d.properties.ISO_A2];
                 // make a colour from the count and return that as the fill
@@ -512,4 +547,8 @@ function getIcon(polarity){
     }
 }
 
-// }(window))
+    // }
+
+//     return new index();
+
+// }(window));
