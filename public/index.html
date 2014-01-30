@@ -55,7 +55,7 @@
       <h3>Subset of Twitter Data with Sentiment Analysis</h3>
       <div class="row">
         <div class="dc-data-count col-md-12">
-          <p id="data-count"><span class="filter-count"></span> selected out of <span class="total-count"></span> tweets | <a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a></p>
+          <p id="data-count"><span class="filter-count"></span> selected out of <span class="total-count"></span> tweets | <a>Reset All</a></p>
         </div>
       </div>
       <div class="row">
@@ -75,19 +75,31 @@
             <a class="reset" href="javascript:countryChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
             <div class="clearfix"></div>
           </div>
-          <div class="col-md-3 col-sm-4 col-xs-12">
-            <p> "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."</p>
+          <div id="month-chart" class="col-md-3 col-sm-4 col-xs-12">
+            <strong>Month Chart</strong>
+            <a class="reset" href="javascript:monthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
           </div>
         </div>
       </div>
 
-      
+      <div class="row">
+        <div class="col-md-12">
+          <div id="date-chart" class="col-md-12">
+            <strong>Date Chart</strong>
+            <a class="reset" href="javascript:dateChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
 
     </section>
 
     <section id="maps" class="row">
       <div class="col-md-12 map">
-        <p id="d3-map-filter"><strong>D3 & Leaflet Choropleth Map</strong></p>
+        <p><strong>D3 & Leaflet Choropleth Map</strong>
+          <a id="d3-map-reset" class="reset" style="display: none;">reset</a>
+        </p>
         <div id="d3-map"></div>
       </div>
     

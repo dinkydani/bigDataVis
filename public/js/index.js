@@ -8,10 +8,14 @@
 var sentimentChart = dc.pieChart("#sentiment-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
 var countryChart = dc.pieChart("#country-chart");
+var monthChart = dc.pieChart("#month-chart");
 var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
+var dateChart = dc.barChart("#date-chart");
 
 var markers = []; //markers array for handling map zoom
 var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var months = ["January","February","March","April","May","June","July", "August", "September", "October", "November", "December"];
+
 //var coloursBlue = ['#084594', '#2171b5', '#4292c6', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff']; //darkest to lightest
 var coloursBlue = ['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#dadaeb', '#c6dbef', '#eff3ff']; //first 5 default dc.js colours
 
@@ -20,6 +24,7 @@ var dateTimeFormat = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
 var choroplethGrades = [0, 10, 20, 50, 100, 200, 500, 1000];
 
 var selectedCountries = []; //array of countries selected on the map
+var selectedCountry = null;
 
 d3.json('/findAll', function (data){
 	//create crossfilter dimensions and groups
@@ -53,7 +58,7 @@ d3.json('/findAll', function (data){
         .dimension(sentimentDimension)
         .group(sentimentGroup)
         .title(function (d){
-            return d.key + "(" + Math.floor(d.value / all.value() * 100) + "%)";
+            return d.key + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
         .on("filtered", redrawSVG);
     
@@ -98,26 +103,37 @@ d3.json('/findAll', function (data){
         .title(function (d){
             return d.key + ": " + d.value + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
-        .on("filtered", function (chart, filter){
-            //filter var contains the country code that has been selected or unselected
-            //or null when reset is pressed
-            console.log(filter);
-
-            redrawSVG(filter);
-        });
+        .on("filtered", redrawSVG);
         
 
-    // dateChart.width(500)
-    //     .height(60)
-    //     //.margins({top: 0, right: 50, bottom: 20, left: 40})
-    //     .dimension(dateDimension)
-    //     .group(volumeByDay)
-    //     .centerBar(true)
-    //     .gap(1)
-    //     .x(d3.time.scale().domain([new Date(1985, 0, 1), new Date(2012, 11, 31)]))
-    //     //.round(d3.time.month.round)
-    //     //.alwaysUseRounding(true)
-    //     .xUnits(d3.time.days);
+    var firstDate = data[0].tweet.time;
+    var lastDate = data[data.length-1].tweet.time;
+
+    var dateDimension = ndx.dimension(function (d){
+        var date = dateTimeFormat.parse(d.tweet.time);
+        if(date < firstDate)
+            firstDate = date;
+        if(date > lastDate)
+            lastDate = date;
+        return date;
+    });
+    console.log("First date " + firstDate);
+    console.log("Last date " + lastDate);
+
+    var dateGroup = dateDimension.group();
+
+    dateChart.width(500)
+        .height(180)
+        .margins({top: 0, right: 50, bottom: 20, left: 40})
+        .dimension(dateDimension)
+        .group(dateGroup)
+        .centerBar(true)
+        .gap(1)
+        .x(d3.time.scale().domain([new Date(firstDate), new Date(lastDate)]))
+        .xUnits(d3.time.days);
+
+
+
 
     /*DC.js CHOROPLETH-CHART*/
     var choroplethDimension = ndx.dimension(function (d){
@@ -151,6 +167,33 @@ d3.json('/findAll', function (data){
 
 
 
+    /*RETWEET CHART*/
+    var monthDimension = ndx.dimension(function (d) {
+        var date = dateTimeFormat.parse(d.tweet.time);
+        return months[date.getMonth()];
+    });
+
+    var monthGroup = monthDimension.group();
+
+    //Create a pie chart and use the given css selector as anchor.
+    //You can also specify an optional chart group for this chart to be scoped within.
+    //When a chart belongs to a specific group then any interaction with such chart will only trigger redrawSVG on other charts
+    //within the same chart group.
+    monthChart.width(180)
+        .height(180)
+        .radius(80)
+        .innerRadius(30)
+        .dimension(monthDimension)
+        .group(monthGroup)
+        .title(function (d){
+            return d.key + " (" + Math.floor(d.value / all.value() * 100) + "%)";
+        })
+        .on("filtered", redrawSVG);
+
+
+
+
+
 
     /* DATA COUNT*/
 	dc.dataCount(".dc-data-count")
@@ -158,6 +201,8 @@ d3.json('/findAll', function (data){
         .group(all);
 
     
+
+
 
 
     /*LEAFLET PLOTTED MAP*/
@@ -315,19 +360,17 @@ d3.json('/findAll', function (data){
     
 
     function countryClicked(country){
-        //check if the country is already selected
-        var inArray = false;
-
-        if (selectedCountries.indexOf(country) > -1) {
-            inArray = true;
-            selectedCountries.splice(selectedCountries.indexOf(country), 1); 
+        //if they match then it's an unselection
+        if(selectedCountry === country){
+            selectedCountry = null;
+            $("#d3-map-reset").hide();
+        } else {
+            selectedCountry = country;
+            $("#d3-map-reset").show();
         }
 
-        if(!inArray){
-            selectedCountries.push(country);
-        }
-
-        if(selectedCountries.length > 0){
+        //check if a country is already selected
+        if(selectedCountry !== null){
             //set all the countries to default grey
             g.selectAll("path")
                 .style("fill", "#E3E3E3");
@@ -335,9 +378,7 @@ d3.json('/findAll', function (data){
             mapCountryDimension.filterAll();
 
             mapCountryDimension.filter(function(d) {
-                for (var i = 0; i < selectedCountries.length; i++) { 
-                    return selectedCountries[i].properties.ISO_A2 === d;
-                }
+                return selectedCountry.properties.ISO_A2 === d;
             });
 
             //set the index for reference later
@@ -351,7 +392,7 @@ d3.json('/findAll', function (data){
             //filter the path based on the clicked country
             g.selectAll("path")
                 .style('fill', function (d) {
-                    if (selectedCountries.indexOf(d) > -1) {
+                    if (selectedCountry === d) {
                       return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
                     else { 
                       return '#E3E3E3';
@@ -371,22 +412,71 @@ d3.json('/findAll', function (data){
             redrawSVG();
         }
 
+
+
+
+        // //check if the country is already selected
+        // var inArray = false;
+
+        // if (selectedCountries.indexOf(country) > -1) {
+        //     inArray = true;
+        //     selectedCountries.splice(selectedCountries.indexOf(country), 1); 
+        // }
+
+        // if(!inArray){
+        //     selectedCountries.push(country);
+        // }
+
+        // if(selectedCountries.length > 0){
+        //     //set all the countries to default grey
+        //     g.selectAll("path")
+        //         .style("fill", "#E3E3E3");
+
+        //     mapCountryDimension.filterAll();
+
+        //     mapCountryDimension.filter(function(d) {
+        //         for (var i = 0; i < selectedCountries.length; i++) { 
+        //             return selectedCountries[i].properties.ISO_A2 === d;
+        //         }
+        //     });
+
+        //     //set the index for reference later
+        //     var d = mapCountryDimension.group().all();
+
+        //     var indexed = {};
+        //     for (var i = 0; i < d.length; i++) {
+        //         indexed[d[i].key] = d[i].value;
+        //     }
+
+        //     //filter the path based on the clicked country
+        //     g.selectAll("path")
+        //         .style('fill', function (d) {
+        //             if (selectedCountries.indexOf(d) > -1) {
+        //               return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
+        //             else { 
+        //               return '#E3E3E3';
+        //             }
+        //         });
+
+            
+        //     dc.redrawAll();
+
+        // } else {
+        //     //clear all the map filters and redraw the map as no countries are selected
+        //     countryDimension.filterAll();
+        //     mapCountryDimension.filterAll();
+        //     countryChart.filterAll();
+
+        //     dc.redrawAll();
+        //     redrawSVG();
+        // }
+
     }
 
     // call when the filter changes
-    function redrawSVG (filter) {
-        // var country;
-        // console.log(typeof filter);
-        // if(filter !== undefined){
-        //     if(filter !== null){
-        //         if(typeof filter === 'string'){
-        //             //the filter is a country name
-        //             country = true;
-        //         }
-        //     } else {
-        //         selectedCountries = []; //clear the countries as reset has been clicked
-        //     }
-        // }
+    function redrawSVG () {
+        selectedCountry = null;
+
         // group() returns the data currently left after the filter in applied elsewhere
         var d = mapCountryDimension.group().all();
 
@@ -514,8 +604,25 @@ d3.json('/findAll', function (data){
     // startRendering(function (){
     //     $("#overlay").hide();
     // });
+    
+    //reset map button clicked
+    $("#d3-map-reset").on("click", function(){
+        //clear all the map filters and redraw the map as no countries are selected
+        countryDimension.filterAll();
+        mapCountryDimension.filterAll();
 
+        dc.redrawAll();
+        redrawSVG();
 
+        $(this).hide();
+    });
+    $("#data-count").on("click", function(){
+        countryDimension.filterAll();
+        mapCountryDimension.filterAll();
+
+        dc.filterAll();
+        dc.redrawAll();
+    });
 
     //last line
     dc.renderAll();

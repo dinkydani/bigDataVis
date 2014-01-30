@@ -10,7 +10,9 @@ section{
 	margin-top: 5px;
 	margin-bottom: 5px;
 }
-
+a{
+	cursor: pointer;
+}
 #d3-map path{
 	fill-opacity: .7;
 	stroke: #fff;
