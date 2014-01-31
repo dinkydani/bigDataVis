@@ -13,7 +13,7 @@ var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
 var dateChart = dc.barChart("#date-chart");
 
 var markers = []; //markers array for handling map zoom
-var days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var days = ["0.Sunday","1.Monday","2.Tuesday","3.Wednesday","4.Thursday","5.Friday","6.Saturday"];
 var months = ["January","February","March","April","May","June","July", "August", "September", "October", "November", "December"];
 
 //var coloursBlue = ['#084594', '#2171b5', '#4292c6', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff']; //darkest to lightest
@@ -68,7 +68,23 @@ d3.json('/findAll', function (data){
     /*DAY OF THE WEEK CHART*/
     var dayOfWeekDimension = ndx.dimension(function (d) {
         var date = dateTimeFormat.parse(d.tweet.time);
-        return days[date.getDay()];
+        // return days[date.getDay()];
+        switch (date.getDay()) {
+          case 0:
+            return "0.Sun";
+          case 1:
+            return "1.Mon";
+          case 2:
+            return "2.Tue";
+          case 3:
+            return "3.Wed";
+          case 4:
+            return "4.Thu";
+          case 5:
+            return "5.Fri";
+          case 6:
+            return "6.Sat";
+        }
     });
 
     var dayOfWeekGroup = dayOfWeekDimension.group();
@@ -77,9 +93,14 @@ d3.json('/findAll', function (data){
     dayOfWeekChart.width(180)
         .height(180)
         .margins({top: 20, left: 10, right: 10, bottom: 20})
-        .group(dayOfWeekGroup)
         .dimension(dayOfWeekDimension)
-        .ordinalColors(coloursBlue)
+        .group(dayOfWeekGroup)
+        // .ordinalColors(coloursBlue)
+        .colors(d3.scale.category10())
+        .label(function (d){
+            return d.key.split(".")[1];
+        })
+        .title(function (d){return d.value;})
         .on("filtered", redrawSVG)
         .elasticX(true)
         .xAxis().ticks(4);
@@ -106,31 +127,49 @@ d3.json('/findAll', function (data){
         .on("filtered", redrawSVG);
         
 
-    var firstDate = data[0].tweet.time;
-    var lastDate = data[data.length-1].tweet.time;
+
 
     var dateDimension = ndx.dimension(function (d){
         var date = dateTimeFormat.parse(d.tweet.time);
-        if(date < firstDate)
-            firstDate = date;
-        if(date > lastDate)
-            lastDate = date;
-        return date;
+        return d3.time.hour.round(date); //return rounded to hour otherwise time overlaps cause weird chart rendering
     });
-    console.log("First date " + firstDate);
-    console.log("Last date " + lastDate);
+
+    //get the first and last date from the dimension
+    var firstDate = new Date(dateDimension.bottom(1)[0].tweet.time);
+    var lastDate = new Date(dateDimension.top(1)[0].tweet.time);
+
+    //set the dates to be plus and minus 5 days
+    firstDate.setDate(firstDate.getDate() - 1);
+    lastDate.setDate(lastDate.getDate() + 1);
 
     var dateGroup = dateDimension.group();
 
     dateChart.width(500)
-        .height(180)
+        .height(100)
+        .width(1170)
         .margins({top: 0, right: 50, bottom: 20, left: 40})
         .dimension(dateDimension)
         .group(dateGroup)
         .centerBar(true)
         .gap(1)
-        .x(d3.time.scale().domain([new Date(firstDate), new Date(lastDate)]))
-        .xUnits(d3.time.days);
+        .renderHorizontalGridLines(true)
+        .on("filtered", redrawSVG)
+        .filterPrinter(function (filters){
+            // var filter = filters[0], s = "";
+            // s += filter[0] + " -> " + filter[1];
+            // return s;
+            var filter = filters[0], s = "", x = "";
+            x += filter[0];
+            s += x.slice(0, x.lastIndexOf(" GMT"));
+            x = "";
+            x += filter[1];
+            s += " -> " + x.slice(0, x.lastIndexOf(" GMT"));
+            return s;
+        })
+        .x(d3.time.scale().domain([firstDate, lastDate]))
+        .xUnits(d3.time.hours)
+        // .elasticY(true);
+        .yAxis().ticks(2);
 
 
 
@@ -167,7 +206,7 @@ d3.json('/findAll', function (data){
 
 
 
-    /*RETWEET CHART*/
+    /*MONTH CHART*/
     var monthDimension = ndx.dimension(function (d) {
         var date = dateTimeFormat.parse(d.tweet.time);
         return months[date.getMonth()];
@@ -348,7 +387,10 @@ d3.json('/findAll', function (data){
     feature = g.selectAll("path")
         .data(countriesJson.features)
         .enter().append("path")
-        .on("click", countryClicked);   
+        .on("click", countryClicked)
+        .on("mouseover", function (d){
+            console.log(d);
+        });
 
     d3map.on("viewreset", resetSVG);
     d3map.on("moveend", resetSVG);
