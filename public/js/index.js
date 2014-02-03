@@ -144,9 +144,8 @@ d3.json('/findAll', function (data){
 
     var dateGroup = dateDimension.group();
 
-    dateChart.width(500)
+    dateChart
         .height(100)
-        .width(1170)
         .margins({top: 0, right: 50, bottom: 20, left: 40})
         .dimension(dateDimension)
         .group(dateGroup)
@@ -387,9 +386,12 @@ d3.json('/findAll', function (data){
     feature = g.selectAll("path")
         .data(countriesJson.features)
         .enter().append("path")
-        .on("click", countryClicked)
-        .on("mouseover", function (d){
-            console.log(d);
+        .on("click", countryClicked);
+
+    g.selectAll("path")
+        .append("svg:title")
+        .text(function(d) {
+            return "Country: " + d.properties.NAME + "\nTweets: " + (d.properties.tweetCount !== undefined ? d.properties.tweetCount : 0);
         });
 
     d3map.on("viewreset", resetSVG);
