@@ -52,7 +52,11 @@
   <main id="main-content" class="container">
 
     <section id="charts">
-      <h3>Subset of Twitter Data with Sentiment Analysis</h3>
+      <h2>Subset of Twitter Data with Sentiment Analysis</h2>
+      <p>Small streams of Twitter data from different times have been collected, reduced, and stored to populate these visualisations.</p>
+      <hr>
+      <h3>Interactive Chart Group</h3>
+      <p>Manipulate the charts to see the changes reflected in the other charts and first two maps.</p> 
       <div class="row">
         <div class="dc-data-count col-md-12">
           <p id="data-count"><span class="filter-count"></span> selected out of <span class="total-count"></span> tweets | <a>Reset All</a></p>
@@ -60,6 +64,7 @@
       </div>
       <div class="row">
         <div class="col-md-12">
+          
           <div id="sentiment-chart" class="col-md-3 col-sm-4 col-xs-12">
             <strong>Sentiment Donut Chart</strong>
             <a class="reset" href="javascript:sentimentChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
@@ -101,26 +106,33 @@
         <p><strong>D3 & Leaflet Choropleth Map</strong>
           <a id="d3-map-reset" class="reset" style="display: none;">reset</a>
         </p>
+        <p>Select a country to see the changes reflected in the charts above.</p> 
         <div id="d3-map"></div>
       </div>
-    
+      
       <div class="col-md-12 map"> 
         <div id="choropleth-chart">
-          <strong>DC Choropleth Chart</strong>
-          
+          <p><strong>DC Choropleth Chart</strong>
           <span class="reset" style="display: none">Current filter: <span class="filter"></span> | </span>
           <a class="reset" href="javascript:choroplethChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+          </p>
+          <p>Select multiple countries to see the changes reflected in the charts above.</p> 
           <div class="clearfix"></div>
         </div>
       </div>
 
+      
       <div class="col-md-12 map">
-        <strong>Leaflet Sentiment Map</strong>
+      <hr>
+      <h3>Other Map Visualisations</h3>
+        <p><strong>Leaflet Sentiment Map</strong></p>
+        <p>Tweet sentiment location. Click the icons for the tweet content.</p> 
         <div id="plotted-map"></div>
       </div>
 
       <div class="col-md-12 map">
-        <strong>Leaflet Choropleth Map</strong>
+        <p><strong>Leaflet Choropleth Map</strong></p>
+        <p>Map showing the number of tweets for each country</p> 
         <div id="choropleth-map"></div>
       </div>
 

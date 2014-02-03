@@ -43,7 +43,7 @@ a{
     opacity: 0.7;
 }
 
-.map{
+.map, .row{
 	margin-top: 2em;
 	margin-bottom: 2em;
 }
@@ -94,10 +94,10 @@ a{
 #d3-map{
 	height: 500px;
 }
-
+/*
 #data-count{
 	text-align: left;
-}
+}*/
 
 #main-content{
 	text-align: center;
