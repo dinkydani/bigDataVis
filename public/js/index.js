@@ -1,10 +1,4 @@
-//$("#overlay").show();
-
-// var index = (function (global){
-
-//     var index = function(){
-
-//charts
+//chart declarations
 var sentimentChart = dc.pieChart("#sentiment-chart");
 var dayOfWeekChart = dc.rowChart("#day-of-week-chart");
 var countryChart = dc.pieChart("#country-chart");
@@ -645,9 +639,7 @@ d3.json('/findAll', function (data){
 
 
 
-    // startRendering(function (){
-    //     $("#overlay").hide();
-    // });
+    
     
     //reset map button clicked
     $("#d3-map-reset").on("click", function(){
@@ -668,8 +660,13 @@ d3.json('/findAll', function (data){
         dc.redrawAll();
     });
 
+    (function (){
+        dc.renderAll();
+        $("#overlay").hide();
+    })();
+
     //last line
-    dc.renderAll();
+    
         
 });
 function startRendering(callback){ 
