@@ -71,7 +71,7 @@
           <div class="col-md-12">
             
             <div id="sentiment-chart" class="col-md-3 col-sm-4 col-xs-12">
-              <p><strong>Sentiment Donut Chart</strong>
+              <p><strong>Sentiment Pie Chart</strong>
               <a class="reset" href="javascript:sentimentChart.filterAll();dc.redrawAll();" style="display: none;">reset</a></p>
               <div class="clearfix"></div>
             </div>
@@ -86,7 +86,7 @@
               <div class="clearfix"></div>
             </div>
             <div id="month-chart" class="col-md-3 col-sm-4 col-xs-12">
-              <p><strong>Month Chart</strong>
+              <p><strong>Month Pie Chart</strong>
               <a class="reset" href="javascript:monthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a></p>
               <div class="clearfix"></div>
             </div>
@@ -96,7 +96,7 @@
         <div class="row">
           <div class="col-md-12">
             <div id="date-chart" class="col-md-12">
-              <strong>Date Chart</strong>
+              <strong>Date Bar Chart</strong>
               <span class="reset" style="display: none;">Range: <span class="filter" style="display: none;"></span></span>
               <a class="reset" href="javascript:dateChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
               <div class="clearfix"></div>
@@ -111,7 +111,7 @@
           <p><strong>D3 & Leaflet Choropleth Map</strong>
             <a id="d3-map-reset" class="reset" style="display: none;">reset</a>
           </p>
-          <p>Select a country to see the changes reflected in the charts above.</p> 
+          <p>Select a country to see the changes reflected in the charts above. Reset this map before manipulating other charts.</p> 
           <div id="d3-map"></div>
         </div>
         
@@ -129,13 +129,16 @@
         <div class="col-md-12 map">
         <h1 class="page-header">Other Map Visualisations</h1>
           <p><strong>Leaflet Sentiment Map</strong></p>
-          <p>Tweet sentiment location. Click the icons for the tweet content.</p> 
+          <p>Tweets plotted by location using different icons to represent the sentiment.</p>
+          <p><span style="color: green">Green</span> = positive, <span style="color:grey">grey</span> = neutral, <span style="color:red">red</span> = negative.</p> 
+          <p>Click the icons for the tweet content.</p>
           <div id="plotted-map"></div>
         </div>
 
         <div class="col-md-12 map">
           <p><strong>Leaflet Choropleth Map</strong></p>
-          <p>Map showing the number of tweets for each country</p> 
+          <p>Map showing the number of tweets for each country, darker colour means more tweets.</p>
+          <p>Hover for more information.</p>
           <div id="choropleth-map"></div>
         </div>
 
