@@ -26,9 +26,9 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <nav class="navbar-collapse bs-navbar-collapse collapse">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="../">Home</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#contact">Contact</a></li>
+          <li class="active"><a href="/">Home</a></li>
+          <li><a href="/about.html">About</a></li>
+          <li><a href="/contact.html">Contact</a></li>
         </ul>
       </nav><!--/.nav-collapse -->
     
@@ -42,106 +42,104 @@
     </div>
   </header>
 
-  <div id="overlay" style="display: none;">
+<!--   <div id="overlay" style="display: none;">
     <div id="loadinganimation">
       <h3>Loading...</h3>
       <img src="imgs/spinner.gif" alt="loading">
     </div>
+  </div> -->
+
+  <div class="container">
+    <main id="main-content">
+
+      <section id="charts">
+        <h1 class="page-header">Subset of Twitter Data with Sentiment Analysis</h1>
+        <p class="lead">Small streams of Twitter data from different times have been collected, reduced, and stored to populate these visualisations.</p>
+
+        <h3 class="page-header">Interactive Chart Group</h3>
+        <p>Manipulate the charts by clicking segments to see the changes reflected in the other charts and first two maps.</p> 
+        <div class="row">
+          <div class="dc-data-count col-md-12">
+            <p id="data-count"><span class="filter-count"></span> selected out of <span class="total-count"></span> tweets | <a>Reset All</a></p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            
+            <div id="sentiment-chart" class="col-md-3 col-sm-4 col-xs-12">
+              <p><strong>Sentiment Donut Chart</strong>
+              <a class="reset" href="javascript:sentimentChart.filterAll();dc.redrawAll();" style="display: none;">reset</a></p>
+              <div class="clearfix"></div>
+            </div>
+            <div id="day-of-week-chart" class="col-md-3 col-sm-4 col-xs-12">
+              <p><strong>Day of the Week Row Chart</strong>
+              <a class="reset" href="javascript:dayOfWeekChart.filterAll();dc.redrawAll();" style="display: none;">reset</a></p>
+              <div class="clearfix"></div>
+            </div>
+            <div id="country-chart" class="col-md-3 col-sm-4 col-xs-12">
+              <p><strong>Country Pie Chart</strong>
+              <a class="reset" href="javascript:countryChart.filterAll();dc.redrawAll();" style="display: none;">reset</a></p>
+              <div class="clearfix"></div>
+            </div>
+            <div id="month-chart" class="col-md-3 col-sm-4 col-xs-12">
+              <p><strong>Month Chart</strong>
+              <a class="reset" href="javascript:monthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a></p>
+              <div class="clearfix"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-12">
+            <div id="date-chart" class="col-md-12">
+              <strong>Date Chart</strong>
+              <span class="reset" style="display: none;">Range: <span class="filter" style="display: none;"></span></span>
+              <a class="reset" href="javascript:dateChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+              <div class="clearfix"></div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <section id="maps" class="row">
+        <div class="col-md-12 map">
+          <p><strong>D3 & Leaflet Choropleth Map</strong>
+            <a id="d3-map-reset" class="reset" style="display: none;">reset</a>
+          </p>
+          <p>Select a country to see the changes reflected in the charts above.</p> 
+          <div id="d3-map"></div>
+        </div>
+        
+        <div class="col-md-12 map"> 
+            <p><strong>DC Choropleth Chart</strong>
+              <span class="reset" style="display: none">Current filter: <span class="filter"></span> | </span>
+              <a class="reset" href="javascript:choroplethChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+            </p>
+            <p>Select multiple countries to see the changes reflected in the charts above.</p> 
+            <div class="clearfix"></div>
+          <div id="choropleth-chart"></div>
+        </div>
+
+        
+        <div class="col-md-12 map">
+        <h1 class="page-header">Other Map Visualisations</h1>
+          <p><strong>Leaflet Sentiment Map</strong></p>
+          <p>Tweet sentiment location. Click the icons for the tweet content.</p> 
+          <div id="plotted-map"></div>
+        </div>
+
+        <div class="col-md-12 map">
+          <p><strong>Leaflet Choropleth Map</strong></p>
+          <p>Map showing the number of tweets for each country</p> 
+          <div id="choropleth-map"></div>
+        </div>
+
+      </section>    
+    </main>
   </div>
 
-  <main id="main-content" class="container">
 
-    <section id="charts">
-      <h2>Subset of Twitter Data with Sentiment Analysis</h2>
-      <p>Small streams of Twitter data from different times have been collected, reduced, and stored to populate these visualisations.</p>
-      <hr>
-      <h3>Interactive Chart Group</h3>
-      <p>Manipulate the charts to see the changes reflected in the other charts and first two maps.</p> 
-      <div class="row">
-        <div class="dc-data-count col-md-12">
-          <p id="data-count"><span class="filter-count"></span> selected out of <span class="total-count"></span> tweets | <a>Reset All</a></p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          
-          <div id="sentiment-chart" class="col-md-3 col-sm-4 col-xs-12">
-            <strong>Sentiment Donut Chart</strong>
-            <a class="reset" href="javascript:sentimentChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
-          </div>
-          <div id="day-of-week-chart" class="col-md-3 col-sm-4 col-xs-12">
-            <strong>Day of the Week Row Chart</strong>
-            <a class="reset" href="javascript:dayOfWeekChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
-          </div>
-          <div id="country-chart" class="col-md-3 col-sm-4 col-xs-12">
-            <strong>Country Pie Chart</strong>
-            <a class="reset" href="javascript:countryChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
-          </div>
-          <div id="month-chart" class="col-md-3 col-sm-4 col-xs-12">
-            <strong>Month Chart</strong>
-            <a class="reset" href="javascript:monthChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">
-          <div id="date-chart" class="col-md-12">
-            <strong>Date Chart</strong>
-            <span class="reset" style="display: none;">Range: <span class="filter" style="display: none;"></span></span>
-            <a class="reset" href="javascript:dateChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            <div class="clearfix"></div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <section id="maps" class="row">
-      <div class="col-md-12 map">
-        <p><strong>D3 & Leaflet Choropleth Map</strong>
-          <a id="d3-map-reset" class="reset" style="display: none;">reset</a>
-        </p>
-        <p>Select a country to see the changes reflected in the charts above.</p> 
-        <div id="d3-map"></div>
-      </div>
-      
-      <div class="col-md-12 map"> 
-          <p><strong>DC Choropleth Chart</strong>
-            <span class="reset" style="display: none">Current filter: <span class="filter"></span> | </span>
-            <a class="reset" href="javascript:choroplethChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-          </p>
-          <p>Select multiple countries to see the changes reflected in the charts above.</p> 
-          <div class="clearfix"></div>
-        <div id="choropleth-chart"></div>
-      </div>
-
-      
-      <div class="col-md-12 map">
-      <hr>
-      <h3>Other Map Visualisations</h3>
-        <p><strong>Leaflet Sentiment Map</strong></p>
-        <p>Tweet sentiment location. Click the icons for the tweet content.</p> 
-        <div id="plotted-map"></div>
-      </div>
-
-      <div class="col-md-12 map">
-        <p><strong>Leaflet Choropleth Map</strong></p>
-        <p>Map showing the number of tweets for each country</p> 
-        <div id="choropleth-map"></div>
-      </div>
-
-      
-    </section>    
-
-
-
-
-  </main>
   <footer id="footer">
     <div class="container">
       <div class="row">
@@ -163,7 +161,6 @@
   <script src="resources/bootstrap.js"></script>
 
   <script src="js/countries.js"></script>
-  <script src="js/us-states.js"></script>
   <script src="js/index.js"></script>
   
 </body>
