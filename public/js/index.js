@@ -54,7 +54,7 @@ d3.json('/findAll', function (data){
         .title(function (d){
             return d.key + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
-        .on("filtered", redrawSVG);
+        // .on("filtered", redrawSVG);
     
 
 
@@ -95,7 +95,7 @@ d3.json('/findAll', function (data){
             return d.key.split(".")[1];
         })
         .title(function (d){return d.value;})
-        .on("filtered", redrawSVG)
+        // .on("filtered", redrawSVG)
         .elasticX(true)
         .xAxis().ticks(4);
         
@@ -118,7 +118,7 @@ d3.json('/findAll', function (data){
         .title(function (d){
             return d.key + ": " + d.value + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
-        .on("filtered", redrawSVG);
+        // .on("filtered", redrawSVG);
         
 
 
@@ -146,7 +146,7 @@ d3.json('/findAll', function (data){
         .centerBar(true)
         .gap(1)
         .renderHorizontalGridLines(true)
-        .on("filtered", redrawSVG)
+        // .on("filtered", redrawSVG)
         .filterPrinter(function (filters){
             // var filter = filters[0], s = "";
             // s += filter[0] + " -> " + filter[1];
@@ -179,7 +179,7 @@ d3.json('/findAll', function (data){
         .height(450)
         .dimension(choroplethDimension)
         .group(choroplethGroup)
-        .on("filtered", redrawSVG)
+        // .on("filtered", redrawSVG)
         .projection(d3.geo.mercator()
             .scale(100)
             .center([0, 40]))
@@ -220,7 +220,7 @@ d3.json('/findAll', function (data){
         .title(function (d){
             return d.key + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
-        .on("filtered", redrawSVG);
+        // .on("filtered", redrawSVG);
 
 
 
@@ -282,69 +282,67 @@ d3.json('/findAll', function (data){
 
 
 
-    /*Choropleth Map*/
-    //setup the data
-    for (var i = 0; i < countryDimension.group().all().length; i++) {
-        for (var j = 0; j < countriesJson.features.length; j++) {
-            if(countryDimension.group().all()[i].key == countriesJson.features[j].properties.ISO_A2){
-                countriesJson.features[j].properties.tweetCount = countryDimension.group().all()[i].value;
-                break;
-            }
-        };
-    };
+    // /*Choropleth Map*/
+    // //setup the data
+    // for (var i = 0; i < countryDimension.group().all().length; i++) {
+    //     for (var j = 0; j < countriesJson.features.length; j++) {
+    //         if(countryDimension.group().all()[i].key == countriesJson.features[j].properties.ISO_A2){
+    //             countriesJson.features[j].properties.tweetCount = countryDimension.group().all()[i].value;
+    //             break;
+    //         }
+    //     };
+    // };
 
 
-    //setup the map
-    var cMap = L.map('choropleth-map').setView([51.505, -0.09], 2);
+    // //setup the map
+    // var cMap = L.map('choropleth-map').setView([51.505, -0.09], 2);
 
-    L.tileLayer(osmUrl, {
-        attribution: attribText,
-        minZoom: 1,
-        maxZoom: 16
-    }).addTo(cMap);
+    // L.tileLayer(osmUrl, {
+    //     attribution: attribText,
+    //     minZoom: 1,
+    //     maxZoom: 16
+    // }).addTo(cMap);
 
-    var geojson = L.geoJson(countriesJson, {
-        style: styleChoropleth,
-        onEachFeature: onEachFeature
-    }).addTo(cMap);
+    // var geojson = L.geoJson(countriesJson, {
+    //     style: styleChoropleth,
+    //     onEachFeature: onEachFeature
+    // }).addTo(cMap);
 
-    var infoPanel = L.control();
+    // var infoPanel = L.control();
 
-    infoPanel.onAdd = function (map) {
-        this._div = L.DomUtil.create('div', 'infoPanel'); // create a div with a class "infoPanel"
-        this.update();
-        return this._div;
-    };
+    // infoPanel.onAdd = function (map) {
+    //     this._div = L.DomUtil.create('div', 'infoPanel'); // create a div with a class "infoPanel"
+    //     this.update();
+    //     return this._div;
+    // };
 
-    // method that we will use to update the control based on feature properties passed
-    infoPanel.update = function (properties) {
-        this._div.innerHTML = '<h4>Number of Tweets</h4>' +  (properties ?
-            '<b>' + properties.NAME + '</b><br />' + properties.tweetCount + ' tweets'
-            : 'Click or hover on a country');
-    };
+    // // method that we will use to update the control based on feature properties passed
+    // infoPanel.update = function (properties) {
+    //     this._div.innerHTML = '<h4>Number of Tweets</h4>' +  (properties ?
+    //         '<b>' + properties.NAME + '</b><br />' + properties.tweetCount + ' tweets'
+    //         : 'Click or hover on a country');
+    // };
 
-    infoPanel.addTo(cMap);
+    // infoPanel.addTo(cMap);
     
-    var legend = L.control({position: 'bottomright'});
+    // var legend = L.control({position: 'bottomright'});
 
-    legend.onAdd = function (map) {
+    // legend.onAdd = function (map) {
 
-        var div = L.DomUtil.create('div', 'infoPanel legend');
-        var labels = [];
+    //     var div = L.DomUtil.create('div', 'infoPanel legend');
+    //     var labels = [];
 
-        // loop through our density intervals and generate a label with a colored square for each interval
-        for (var i = 0; i < choroplethGrades.length; i++) {
-            div.innerHTML +=
-                '<i style="background:' + getChoroplethColor(choroplethGrades[i] + 1) + '"></i> ' +
-                choroplethGrades[i] + (choroplethGrades[i + 1] ? '&ndash;' + choroplethGrades[i + 1] + '<br>' : '+');
-        }
+    //     // loop through our density intervals and generate a label with a colored square for each interval
+    //     for (var i = 0; i < choroplethGrades.length; i++) {
+    //         div.innerHTML +=
+    //             '<i style="background:' + getChoroplethColor(choroplethGrades[i] + 1) + '"></i> ' +
+    //             choroplethGrades[i] + (choroplethGrades[i + 1] ? '&ndash;' + choroplethGrades[i + 1] + '<br>' : '+');
+    //     }
 
-        return div;
-    };
+    //     return div;
+    // };
 
-    legend.addTo(cMap);
-
-
+    // legend.addTo(cMap);
 
 
 
@@ -352,306 +350,308 @@ d3.json('/findAll', function (data){
 
 
 
-    /*D3 & Leaflet CHOROPLETH MAP*/
-    var mapCountryDimension = ndx.dimension(function (d){
-        return d.tweet.geo.place.country_code;
-    });
-
-    //setup the map
-    var d3map = L.map('d3-map').setView([51.505, -0.09], 2);
-
-    L.tileLayer(osmUrl, {
-        attribution: attribText,
-        minZoom: 1,
-        maxZoom: 16
-    }).addTo(d3map);
 
 
-    var svg = d3.select(d3map.getPanes().overlayPane).append("svg"),
-        g = svg.append("g").attr("class", "leaflet-zoom-hide");
+    // /*D3 & Leaflet CHOROPLETH MAP*/
+    // var mapCountryDimension = ndx.dimension(function (d){
+    //     return d.tweet.geo.place.country_code;
+    // });
 
-    var transform = d3.geo.transform({point: projectPoint}),
-        path = d3.geo.path().projection(transform),
-        bounds = path.bounds(countriesJson);
+    // //setup the map
+    // var d3map = L.map('d3-map').setView([51.505, -0.09], 2);
 
-    // colour ramp, a range of colours red to blue using a scale from 0 to the max tweet count
-    //var ramp = d3.scale.linear().domain([0,mapCountryDimension.group().top(1)]).range(["red","blue"]);
+    // L.tileLayer(osmUrl, {
+    //     attribution: attribText,
+    //     minZoom: 1,
+    //     maxZoom: 16
+    // }).addTo(d3map);
 
-    feature = g.selectAll("path")
-        .data(countriesJson.features)
-        .enter().append("path")
-        .on("click", countryClicked);
 
-    g.selectAll("path")
-        .append("svg:title")
-        .text(function(d) {
-            return "Country: " + d.properties.NAME + "\nTweets: " + (d.properties.tweetCount !== undefined ? d.properties.tweetCount : 0);
-        });
+    // var svg = d3.select(d3map.getPanes().overlayPane).append("svg"),
+    //     g = svg.append("g").attr("class", "leaflet-zoom-hide");
 
-    d3map.on("viewreset", resetSVG);
-    d3map.on("moveend", resetSVG);
+    // var transform = d3.geo.transform({point: projectPoint}),
+    //     path = d3.geo.path().projection(transform),
+    //     bounds = path.bounds(countriesJson);
 
-    redrawSVG();
-    resetSVG();
-    
+    // // colour ramp, a range of colours red to blue using a scale from 0 to the max tweet count
+    // //var ramp = d3.scale.linear().domain([0,mapCountryDimension.group().top(1)]).range(["red","blue"]);
 
+    // feature = g.selectAll("path")
+    //     .data(countriesJson.features)
+    //     .enter().append("path")
+    //     .on("click", countryClicked);
+
+    // g.selectAll("path")
+    //     .append("svg:title")
+    //     .text(function(d) {
+    //         return "Country: " + d.properties.NAME + "\nTweets: " + (d.properties.tweetCount !== undefined ? d.properties.tweetCount : 0);
+    //     });
+
+    // d3map.on("viewreset", resetSVG);
+    // d3map.on("moveend", resetSVG);
+
+    // redrawSVG();
+    // resetSVG();
     
 
-    function countryClicked(country){
-        //if they match then it's an unselection
-        if(selectedCountry === country){
-            selectedCountry = null;
-            $("#d3-map-reset").hide();
-        } else {
-            selectedCountry = country;
-            $("#d3-map-reset").show();
-        }
+    
 
-        //check if a country is already selected
-        if(selectedCountry !== null){
-            //set all the countries to default grey
-            g.selectAll("path")
-                .style("fill", "#E3E3E3");
+    // function countryClicked(country){
+    //     //if they match then it's an unselection
+    //     if(selectedCountry === country){
+    //         selectedCountry = null;
+    //         $("#d3-map-reset").hide();
+    //     } else {
+    //         selectedCountry = country;
+    //         $("#d3-map-reset").show();
+    //     }
 
-            mapCountryDimension.filterAll();
+    //     //check if a country is already selected
+    //     if(selectedCountry !== null){
+    //         //set all the countries to default grey
+    //         g.selectAll("path")
+    //             .style("fill", "#E3E3E3");
 
-            mapCountryDimension.filter(function(d) {
-                return selectedCountry.properties.ISO_A2 === d;
-            });
+    //         mapCountryDimension.filterAll();
 
-            //set the index for reference later
-            var d = mapCountryDimension.group().all();
+    //         mapCountryDimension.filter(function(d) {
+    //             return selectedCountry.properties.ISO_A2 === d;
+    //         });
 
-            var indexed = {};
-            for (var i = 0; i < d.length; i++) {
-                indexed[d[i].key] = d[i].value;
-            }
+    //         //set the index for reference later
+    //         var d = mapCountryDimension.group().all();
 
-            //filter the path based on the clicked country
-            g.selectAll("path")
-                .style('fill', function (d) {
-                    if (selectedCountry === d) {
-                      return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
-                    else { 
-                      return '#E3E3E3';
-                    }
-                });
+    //         var indexed = {};
+    //         for (var i = 0; i < d.length; i++) {
+    //             indexed[d[i].key] = d[i].value;
+    //         }
+
+    //         //filter the path based on the clicked country
+    //         g.selectAll("path")
+    //             .style('fill', function (d) {
+    //                 if (selectedCountry === d) {
+    //                   return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
+    //                 else { 
+    //                   return '#E3E3E3';
+    //                 }
+    //             });
 
             
-            dc.redrawAll();
+    //         dc.redrawAll();
 
-        } else {
-            //clear all the map filters and redraw the map as no countries are selected
-            countryDimension.filterAll();
-            mapCountryDimension.filterAll();
-            countryChart.filterAll();
+    //     } else {
+    //         //clear all the map filters and redraw the map as no countries are selected
+    //         countryDimension.filterAll();
+    //         mapCountryDimension.filterAll();
+    //         countryChart.filterAll();
 
-            dc.redrawAll();
-            redrawSVG();
-        }
-
-
+    //         dc.redrawAll();
+    //         redrawSVG();
+    //     }
 
 
-        // //check if the country is already selected
-        // var inArray = false;
 
-        // if (selectedCountries.indexOf(country) > -1) {
-        //     inArray = true;
-        //     selectedCountries.splice(selectedCountries.indexOf(country), 1); 
-        // }
 
-        // if(!inArray){
-        //     selectedCountries.push(country);
-        // }
+    //     // //check if the country is already selected
+    //     // var inArray = false;
 
-        // if(selectedCountries.length > 0){
-        //     //set all the countries to default grey
-        //     g.selectAll("path")
-        //         .style("fill", "#E3E3E3");
+    //     // if (selectedCountries.indexOf(country) > -1) {
+    //     //     inArray = true;
+    //     //     selectedCountries.splice(selectedCountries.indexOf(country), 1); 
+    //     // }
 
-        //     mapCountryDimension.filterAll();
+    //     // if(!inArray){
+    //     //     selectedCountries.push(country);
+    //     // }
 
-        //     mapCountryDimension.filter(function(d) {
-        //         for (var i = 0; i < selectedCountries.length; i++) { 
-        //             return selectedCountries[i].properties.ISO_A2 === d;
-        //         }
-        //     });
+    //     // if(selectedCountries.length > 0){
+    //     //     //set all the countries to default grey
+    //     //     g.selectAll("path")
+    //     //         .style("fill", "#E3E3E3");
 
-        //     //set the index for reference later
-        //     var d = mapCountryDimension.group().all();
+    //     //     mapCountryDimension.filterAll();
 
-        //     var indexed = {};
-        //     for (var i = 0; i < d.length; i++) {
-        //         indexed[d[i].key] = d[i].value;
-        //     }
+    //     //     mapCountryDimension.filter(function(d) {
+    //     //         for (var i = 0; i < selectedCountries.length; i++) { 
+    //     //             return selectedCountries[i].properties.ISO_A2 === d;
+    //     //         }
+    //     //     });
 
-        //     //filter the path based on the clicked country
-        //     g.selectAll("path")
-        //         .style('fill', function (d) {
-        //             if (selectedCountries.indexOf(d) > -1) {
-        //               return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
-        //             else { 
-        //               return '#E3E3E3';
-        //             }
-        //         });
+    //     //     //set the index for reference later
+    //     //     var d = mapCountryDimension.group().all();
+
+    //     //     var indexed = {};
+    //     //     for (var i = 0; i < d.length; i++) {
+    //     //         indexed[d[i].key] = d[i].value;
+    //     //     }
+
+    //     //     //filter the path based on the clicked country
+    //     //     g.selectAll("path")
+    //     //         .style('fill', function (d) {
+    //     //             if (selectedCountries.indexOf(d) > -1) {
+    //     //               return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
+    //     //             else { 
+    //     //               return '#E3E3E3';
+    //     //             }
+    //     //         });
 
             
-        //     dc.redrawAll();
+    //     //     dc.redrawAll();
 
-        // } else {
-        //     //clear all the map filters and redraw the map as no countries are selected
-        //     countryDimension.filterAll();
-        //     mapCountryDimension.filterAll();
-        //     countryChart.filterAll();
+    //     // } else {
+    //     //     //clear all the map filters and redraw the map as no countries are selected
+    //     //     countryDimension.filterAll();
+    //     //     mapCountryDimension.filterAll();
+    //     //     countryChart.filterAll();
 
-        //     dc.redrawAll();
-        //     redrawSVG();
-        // }
+    //     //     dc.redrawAll();
+    //     //     redrawSVG();
+    //     // }
 
-    }
+    // }
 
-    // call when the filter changes
-    function redrawSVG () {
-        selectedCountry = null;
+    // // call when the filter changes
+    // function redrawSVG () {
+    //     selectedCountry = null;
 
-        // group() returns the data currently left after the filter in applied elsewhere
-        var d = mapCountryDimension.group().all();
+    //     // group() returns the data currently left after the filter in applied elsewhere
+    //     var d = mapCountryDimension.group().all();
 
-        // this indexes the country by name so we can look it up later
-        var indexed = {};
-        for (var i = 0; i < d.length; i++) {
-          indexed[d[i].key] = d[i].value;
-        }
+    //     // this indexes the country by name so we can look it up later
+    //     var indexed = {};
+    //     for (var i = 0; i < d.length; i++) {
+    //       indexed[d[i].key] = d[i].value;
+    //     }
       
-        // select all the country paths again
-        g.selectAll('path')
-            .style('fill', function (d) {
-                // if(country){
-                //     if(filter === d.properties.ISO_A2){
-                //         //check if the country is already selected
-                //         var inArray = false;
+    //     // select all the country paths again
+    //     g.selectAll('path')
+    //         .style('fill', function (d) {
+    //             // if(country){
+    //             //     if(filter === d.properties.ISO_A2){
+    //             //         //check if the country is already selected
+    //             //         var inArray = false;
 
-                //         if (selectedCountries.indexOf(d) > -1) {
-                //             inArray = true;
-                //             selectedCountries.splice(selectedCountries.indexOf(d), 1); 
-                //         }
+    //             //         if (selectedCountries.indexOf(d) > -1) {
+    //             //             inArray = true;
+    //             //             selectedCountries.splice(selectedCountries.indexOf(d), 1); 
+    //             //         }
 
-                //         if(!inArray){
-                //             selectedCountries.push(d);
-                //         }
-                //         console.log(selectedCountries);
-                //     }
-                // }
-                // this time look up the tweet count from the indexed cf group
-                var count = indexed[d.properties.ISO_A2];
-                // make a colour from the count and return that as the fill
-                return getChoroplethColorBlue(count);       
-        })
-    }
+    //             //         if(!inArray){
+    //             //             selectedCountries.push(d);
+    //             //         }
+    //             //         console.log(selectedCountries);
+    //             //     }
+    //             // }
+    //             // this time look up the tweet count from the indexed cf group
+    //             var count = indexed[d.properties.ISO_A2];
+    //             // make a colour from the count and return that as the fill
+    //             return getChoroplethColorBlue(count);       
+    //     })
+    // }
 
-    function projectPoint(x, y) {
-        var point = d3map.latLngToLayerPoint(new L.LatLng(y, x));
-        this.stream.point(point.x, point.y);
-    }
+    // function projectPoint(x, y) {
+    //     var point = d3map.latLngToLayerPoint(new L.LatLng(y, x));
+    //     this.stream.point(point.x, point.y);
+    // }
 
-    // Reposition the SVG to cover the features.
-    function resetSVG() {
-        var topLeft = bounds[0],
-            bottomRight = bounds[1];
+    // // Reposition the SVG to cover the features.
+    // function resetSVG() {
+    //     var topLeft = bounds[0],
+    //         bottomRight = bounds[1];
 
-        svg.attr("width", bottomRight[0] - topLeft[0])
-           .attr("height", bottomRight[1] - topLeft[1])
-           .style("left", topLeft[0] + "px")
-           .style("top", topLeft[1] + "px");
+    //     svg.attr("width", bottomRight[0] - topLeft[0])
+    //        .attr("height", bottomRight[1] - topLeft[1])
+    //        .style("left", topLeft[0] + "px")
+    //        .style("top", topLeft[1] + "px");
 
-        g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+    //     g.attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
-        feature.attr("d", path);
-    }
-
-    
-    function styleChoropleth(feature) {
-        return {
-            fillColor: getChoroplethColor(feature.properties.tweetCount),
-            weight: 1.5,
-            opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: 0.7
-        };
-    }
-
-    function getChoroplethColor(d) {
-        //TODO: adjust the colours and decide values
-        //Math.floor(d.value / all.value() * 100)
-
-        return d > choroplethGrades[6] ? '#800026' :
-               d > choroplethGrades[5] ? '#BD0026' :
-               d > choroplethGrades[4] ? '#E31A1C' :
-               d > choroplethGrades[3] ? '#FC4E2A' :
-               d > choroplethGrades[2] ? '#FD8D3C' :
-               d > choroplethGrades[1] ? '#FEB24C' :
-               d > choroplethGrades[0] ? '#FED976' :
-                                         '#FFEDA0';
-    }
-    function getChoroplethColorBlue(d){
-        return d > choroplethGrades[6] ? '#0061B5' :
-               d > choroplethGrades[5] ? '#1E96FF' :
-               d > choroplethGrades[4] ? '#36A2FF' :
-               d > choroplethGrades[3] ? '#51AEFF' :
-               d > choroplethGrades[2] ? '#81C5FF' :
-               d > choroplethGrades[1] ? '#9ED2FF' :
-               d > choroplethGrades[0] ? '#C4E4FF' :
-                                         '#ccc';
-    }
-
-    function highlightFeature(e) {
-        var layer = e.target;
-
-        layer.setStyle({
-            weight: 3,
-            color: '#666',
-            dashArray: '',
-            fillOpacity: 0.7
-        });
-
-        if (!L.Browser.ie && !L.Browser.opera) {
-            layer.bringToFront();
-        }
-        infoPanel.update(layer.feature.properties);
-    }
-
-    function resetHighlight(e) {
-        geojson.resetStyle(e.target);
-        infoPanel.update();
-    }
-
-    function onEachFeature(feature, layer) {
-        layer.on({
-            click: function(){
-                infoPanel.update(layer.feature.properties);
-            },
-            mouseover: highlightFeature,
-            mouseout: resetHighlight,
-        });
-    }
-
-
+    //     feature.attr("d", path);
+    // }
 
     
+    // function styleChoropleth(feature) {
+    //     return {
+    //         fillColor: getChoroplethColor(feature.properties.tweetCount),
+    //         weight: 1.5,
+    //         opacity: 1,
+    //         color: 'white',
+    //         dashArray: '3',
+    //         fillOpacity: 0.7
+    //     };
+    // }
+
+    // function getChoroplethColor(d) {
+    //     //TODO: adjust the colours and decide values
+    //     //Math.floor(d.value / all.value() * 100)
+
+    //     return d > choroplethGrades[6] ? '#800026' :
+    //            d > choroplethGrades[5] ? '#BD0026' :
+    //            d > choroplethGrades[4] ? '#E31A1C' :
+    //            d > choroplethGrades[3] ? '#FC4E2A' :
+    //            d > choroplethGrades[2] ? '#FD8D3C' :
+    //            d > choroplethGrades[1] ? '#FEB24C' :
+    //            d > choroplethGrades[0] ? '#FED976' :
+    //                                      '#FFEDA0';
+    // }
+    // function getChoroplethColorBlue(d){
+    //     return d > choroplethGrades[6] ? '#0061B5' :
+    //            d > choroplethGrades[5] ? '#1E96FF' :
+    //            d > choroplethGrades[4] ? '#36A2FF' :
+    //            d > choroplethGrades[3] ? '#51AEFF' :
+    //            d > choroplethGrades[2] ? '#81C5FF' :
+    //            d > choroplethGrades[1] ? '#9ED2FF' :
+    //            d > choroplethGrades[0] ? '#C4E4FF' :
+    //                                      '#ccc';
+    // }
+
+    // function highlightFeature(e) {
+    //     var layer = e.target;
+
+    //     layer.setStyle({
+    //         weight: 3,
+    //         color: '#666',
+    //         dashArray: '',
+    //         fillOpacity: 0.7
+    //     });
+
+    //     if (!L.Browser.ie && !L.Browser.opera) {
+    //         layer.bringToFront();
+    //     }
+    //     infoPanel.update(layer.feature.properties);
+    // }
+
+    // function resetHighlight(e) {
+    //     geojson.resetStyle(e.target);
+    //     infoPanel.update();
+    // }
+
+    // function onEachFeature(feature, layer) {
+    //     layer.on({
+    //         click: function(){
+    //             infoPanel.update(layer.feature.properties);
+    //         },
+    //         mouseover: highlightFeature,
+    //         mouseout: resetHighlight,
+    //     });
+    // }
+
+
+
     
-    //reset map button clicked
-    $("#d3-map-reset").on("click", function(){
-        //clear all the map filters and redraw the map as no countries are selected
-        countryDimension.filterAll();
-        mapCountryDimension.filterAll();
+    
+    // //reset map button clicked
+    // $("#d3-map-reset").on("click", function(){
+    //     //clear all the map filters and redraw the map as no countries are selected
+    //     countryDimension.filterAll();
+    //     mapCountryDimension.filterAll();
 
-        dc.redrawAll();
-        redrawSVG();
+    //     dc.redrawAll();
+    //     redrawSVG();
 
-        $(this).hide();
-    });
+    //     $(this).hide();
+    // });
     $("#data-count").on("click", function(){
         countryDimension.filterAll();
         mapCountryDimension.filterAll();
