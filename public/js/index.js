@@ -282,67 +282,67 @@ d3.json('/findAll', function (data){
 
 
 
-    // /*Choropleth Map*/
-    // //setup the data
-    // for (var i = 0; i < countryDimension.group().all().length; i++) {
-    //     for (var j = 0; j < countriesJson.features.length; j++) {
-    //         if(countryDimension.group().all()[i].key == countriesJson.features[j].properties.ISO_A2){
-    //             countriesJson.features[j].properties.tweetCount = countryDimension.group().all()[i].value;
-    //             break;
-    //         }
-    //     };
-    // };
+    /*Choropleth Map*/
+    //setup the data
+    for (var i = 0; i < countryDimension.group().all().length; i++) {
+        for (var j = 0; j < countriesJson.features.length; j++) {
+            if(countryDimension.group().all()[i].key == countriesJson.features[j].properties.ISO_A2){
+                countriesJson.features[j].properties.tweetCount = countryDimension.group().all()[i].value;
+                break;
+            }
+        };
+    };
 
 
-    // //setup the map
-    // var cMap = L.map('choropleth-map').setView([51.505, -0.09], 2);
+    //setup the map
+    var cMap = L.map('choropleth-map').setView([51.505, -0.09], 2);
 
-    // L.tileLayer(osmUrl, {
-    //     attribution: attribText,
-    //     minZoom: 1,
-    //     maxZoom: 16
-    // }).addTo(cMap);
+    L.tileLayer(osmUrl, {
+        attribution: attribText,
+        minZoom: 1,
+        maxZoom: 16
+    }).addTo(cMap);
 
-    // var geojson = L.geoJson(countriesJson, {
-    //     style: styleChoropleth,
-    //     onEachFeature: onEachFeature
-    // }).addTo(cMap);
+    var geojson = L.geoJson(countriesJson, {
+        style: styleChoropleth,
+        onEachFeature: onEachFeature
+    }).addTo(cMap);
 
-    // var infoPanel = L.control();
+    var infoPanel = L.control();
 
-    // infoPanel.onAdd = function (map) {
-    //     this._div = L.DomUtil.create('div', 'infoPanel'); // create a div with a class "infoPanel"
-    //     this.update();
-    //     return this._div;
-    // };
+    infoPanel.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'infoPanel'); // create a div with a class "infoPanel"
+        this.update();
+        return this._div;
+    };
 
-    // // method that we will use to update the control based on feature properties passed
-    // infoPanel.update = function (properties) {
-    //     this._div.innerHTML = '<h4>Number of Tweets</h4>' +  (properties ?
-    //         '<b>' + properties.NAME + '</b><br />' + properties.tweetCount + ' tweets'
-    //         : 'Click or hover on a country');
-    // };
+    // method that we will use to update the control based on feature properties passed
+    infoPanel.update = function (properties) {
+        this._div.innerHTML = '<h4>Number of Tweets</h4>' +  (properties ?
+            '<b>' + properties.NAME + '</b><br />' + properties.tweetCount + ' tweets'
+            : 'Click or hover on a country');
+    };
 
-    // infoPanel.addTo(cMap);
+    infoPanel.addTo(cMap);
     
-    // var legend = L.control({position: 'bottomright'});
+    var legend = L.control({position: 'bottomright'});
 
-    // legend.onAdd = function (map) {
+    legend.onAdd = function (map) {
 
-    //     var div = L.DomUtil.create('div', 'infoPanel legend');
-    //     var labels = [];
+        var div = L.DomUtil.create('div', 'infoPanel legend');
+        var labels = [];
 
-    //     // loop through our density intervals and generate a label with a colored square for each interval
-    //     for (var i = 0; i < choroplethGrades.length; i++) {
-    //         div.innerHTML +=
-    //             '<i style="background:' + getChoroplethColor(choroplethGrades[i] + 1) + '"></i> ' +
-    //             choroplethGrades[i] + (choroplethGrades[i + 1] ? '&ndash;' + choroplethGrades[i + 1] + '<br>' : '+');
-    //     }
+        // loop through our density intervals and generate a label with a colored square for each interval
+        for (var i = 0; i < choroplethGrades.length; i++) {
+            div.innerHTML +=
+                '<i style="background:' + getChoroplethColor(choroplethGrades[i] + 1) + '"></i> ' +
+                choroplethGrades[i] + (choroplethGrades[i + 1] ? '&ndash;' + choroplethGrades[i + 1] + '<br>' : '+');
+        }
 
-    //     return div;
-    // };
+        return div;
+    };
 
-    // legend.addTo(cMap);
+    legend.addTo(cMap);
 
 
 
