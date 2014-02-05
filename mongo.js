@@ -13,7 +13,7 @@ var DatabaseConnection = function(mongoUri){
 
 //get the collection
 DatabaseConnection.prototype.getCollection = function(callback) {
-	db.collection('tweets_with_geo', function(err, collection) {
+	db.collection('tweets_sochi', function(err, collection) {
 		if( err ) callback(err);
     	else callback(null, collection);
 	});

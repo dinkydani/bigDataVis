@@ -11,8 +11,8 @@ var twit = new twitter({
 });
 
 /*mongo*/
-var mongoUri = 'mongodb://localhost/finalyearproject';
-//var mongoUri = 'mongodb://dinkydani:' + credentials.mongo_password + '@ds061238.mongolab.com:61238/heroku_app21304795';
+//var mongoUri = 'mongodb://localhost/finalyearproject';
+var mongoUri = 'mongodb://dinkydani:' + credentials.mongo_password + '@ds061238.mongolab.com:61238/heroku_app21304795';
 var db = new Db(mongoUri);
 
 //variables for sentiment batching (dont want to kill their server)
@@ -21,13 +21,14 @@ var sentimentUrl = 'http://www.sentiment140.com/api/bulkClassifyJson'; //url of 
 
 var batchSize = 25; //number of tweets to batch 
 
-var topicToTrack = "#blackfriday" //'track' : topicToTrack, 
+var topicToTrack = ['Sochi2014', 'sochi', 'olympics', 'olympic']; //'track' : topicToTrack, 
 
 var GetTweets = function(){}; //define a tweet streamer object
 
 GetTweets.prototype.stream = function() {
         //call the stream with a filter to ensure tweets have geo 
-        twit.stream('statuses/filter', {'locations':'-180,-90,180,90'}, function(stream) {
+        //twit.stream('statuses/filter', {'locations':'-180,-90,180,90'}, function (stream) {
+        twit.stream('statuses/filter', {'track': topicToTrack}, function (stream) {
         	//when a tweet comes in strip the data out, get sentiment and store in mongo
 	      	stream.on('data', function (data) {
 	        	processTweet(data);
@@ -42,12 +43,11 @@ GetTweets.prototype.stream = function() {
 			});
 
 	        //kill the stream after x seconds
-	        setTimeout(stream.destroy, 15000);
+	        //setTimeout(stream.destroy, 15000);
         });
 };
 
 function processTweet(data){
-
 	//take the large data object and only store the information needed
 	var tweet = {
 		id : data.id,
@@ -74,7 +74,7 @@ function processTweet(data){
 	//get the sentiment for this tweet
 	getGeo(tweet, function(tweet, data){
 		getSentiment(tweet, function(data){
-		//console.log("Got sentiment");
+		console.log("Got sentiment");
 
 		//store tweets in mongo
 		db.insert(data, function(err, res){
@@ -99,6 +99,7 @@ function getSentiment(tweet, callback){
 		text : tweet.text,
 		tweet : tweet
 	});
+	console.log("batch length: " + sentimentBatch.length);
 
 	// if the batch becomes full
 	if(sentimentBatch.length === batchSize){
