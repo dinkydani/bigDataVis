@@ -319,7 +319,7 @@ d3.json('/findAll', function (data){
     // method that we will use to update the control based on feature properties passed
     infoPanel.update = function (properties) {
         this._div.innerHTML = '<h4>Number of Tweets</h4>' +  (properties ?
-            '<b>' + properties.NAME + '</b><br />' + properties.tweetCount + ' tweets'
+            '<b>' + properties.NAME + '</b><br />' + (properties.tweetCount !== undefined ? properties.tweetCount : 0) + ' tweets'
             : 'Click or hover on a country');
     };
 
