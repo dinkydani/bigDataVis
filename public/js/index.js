@@ -409,6 +409,8 @@ d3.json('/findAll', function (data){
             //set all the countries to default grey
             g.selectAll("path")
                 .style("fill", "#E3E3E3");
+            //remove current titles
+            g.selectAll("title").remove();
 
             mapCountryDimension.filterAll();
 
@@ -432,7 +434,16 @@ d3.json('/findAll', function (data){
                     else { 
                       return '#E3E3E3';
                     }
-                });
+                }).append("svg:title")
+                    .text(function(d) {
+                        if (selectedCountry === d) {
+                            return "Country: " + d.properties.NAME + "\nTweets: " + (indexed[d.properties.ISO_A2] !== undefined ? indexed[d.properties.ISO_A2] : 0);
+                        }
+                        else { 
+                            return "Country: " + d.properties.NAME + "\nTweets: 0";
+
+                        }
+                    });
 
             
             dc.redrawAll();
@@ -520,7 +531,7 @@ d3.json('/findAll', function (data){
         for (var i = 0; i < d.length; i++) {
           indexed[d[i].key] = d[i].value;
         }
-      
+        g.selectAll("title").remove();
         // select all the country paths again
         g.selectAll('path')
             .style('fill', function (d) {
@@ -544,7 +555,10 @@ d3.json('/findAll', function (data){
                 var count = indexed[d.properties.ISO_A2];
                 // make a colour from the count and return that as the fill
                 return getChoroplethColorBlue(count);       
-        })
+        }).append("svg:title")
+            .text(function(d) {
+                return "Country: " + d.properties.NAME + "\nTweets: " + (indexed[d.properties.ISO_A2] !== undefined ? indexed[d.properties.ISO_A2] : 0);
+            });
     }
 
     function projectPoint(x, y) {
