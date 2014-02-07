@@ -15,7 +15,7 @@ var coloursBlue = ['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#dadaeb', '#c6db
 
 var dateTimeFormat = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
 
-var choroplethGrades = [0, 10, 20, 50, 100, 200, 500, 1000];
+var choroplethGrades = [0, 10, 50, 100, 200, 500, 1000, 2000];
 
 var selectedCountries = []; //array of countries selected on the map
 var selectedCountry = null;
@@ -148,9 +148,6 @@ d3.json('/findAll', function (data){
         .renderHorizontalGridLines(true)
         .on("filtered", redrawSVG)
         .filterPrinter(function (filters){
-            // var filter = filters[0], s = "";
-            // s += filter[0] + " -> " + filter[1];
-            // return s;
             var filter = filters[0], s = "", x = "";
             x += filter[0];
             s += x.slice(0, x.lastIndexOf(" GMT"));
@@ -652,7 +649,7 @@ d3.json('/findAll', function (data){
 
         $(this).hide();
     });
-    $("#data-count").on("click", function(){
+    $("#data-count a").on("click", function(){
         countryDimension.filterAll();
         mapCountryDimension.filterAll();
 
