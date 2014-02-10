@@ -180,8 +180,8 @@ d3.json('/findAll', function (data){
         .projection(d3.geo.mercator()
             .scale(100)
             .center([0, 40]))
-        .colors(d3.scale.quantize().range(["#C4E4FF", "#9ED2FF", "#81C5FF", "#51AEFF", "#36A2FF", "#1E96FF", "#0061B5"]))
-        //.colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
+        //.colors(d3.scale.quantize().range(["#C4E4FF", "#9ED2FF", "#81C5FF", "#51AEFF", "#36A2FF", "#1E96FF", "#0061B5"]))
+        .colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
         .colorDomain([0, 200])
         .colorCalculator(function (d) { return d ? choroplethChart.colors()(d) : '#ccc'; })
         .overlayGeoJson(countriesJson.features, "state", function (d) {
