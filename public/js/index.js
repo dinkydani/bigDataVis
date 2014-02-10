@@ -115,6 +115,7 @@ d3.json('/findAll', function (data){
         .radius(80)
         .dimension(countryDimension)
         .group(countryGroup)
+        .colors(d3.scale.category20())
         .title(function (d){
             return d.key + ": " + d.value + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
