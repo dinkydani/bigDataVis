@@ -705,9 +705,3 @@ function getIcon(polarity){
         });
     }
 }
-
-    // }
-
-//     return new index();
-
-// }(window));
