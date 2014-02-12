@@ -115,6 +115,7 @@ d3.json('/findAll', function (data){
         .radius(80)
         .dimension(countryDimension)
         .group(countryGroup)
+        .ordinalColors(["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99"])
         .title(function (d){
             return d.key + ": " + d.value + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
@@ -208,8 +209,6 @@ d3.json('/findAll', function (data){
         .projection(d3.geo.mercator()
             .scale(100)
             .center([0, 40]))
-        //.colors(d3.scale.quantize().range(["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]))
-        //.colorDomain([0, 200])
         .colorCalculator(function (d) { return d ? getChoroplethColorBlue(d) : '#ccc'; })
         .overlayGeoJson(countriesJson.features, "state", function (d) {
             return d.properties.ISO_A2;
