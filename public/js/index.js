@@ -123,6 +123,7 @@ d3.json('/findAll', function (data){
 
 
 
+    /* DATE BAR CHART*/
     var dateDimension = ndx.dimension(function (d){
         var date = dateTimeFormat.parse(d.tweet.time);
         return d3.time.hour.round(date); //return rounded to hour otherwise time overlaps cause weird chart rendering
@@ -164,7 +165,34 @@ d3.json('/findAll', function (data){
 
 
 
-    /*DC.js CHOROPLETH-CHART*/
+
+    /*MONTH CHART*/
+    var monthDimension = ndx.dimension(function (d) {
+        var date = dateTimeFormat.parse(d.tweet.time);
+        return months[date.getMonth()];
+    });
+
+    var monthGroup = monthDimension.group();
+
+    //Create a pie chart and use the given css selector as anchor.
+    //You can also specify an optional chart group for this chart to be scoped within.
+    //When a chart belongs to a specific group then any interaction with such chart will only trigger redrawSVG on other charts
+    //within the same chart group.
+    monthChart.width(180)
+        .height(180)
+        .radius(80)
+        .innerRadius(30)
+        .dimension(monthDimension)
+        .group(monthGroup)
+        .title(function (d){
+            return d.key + " (" + Math.floor(d.value / all.value() * 100) + "%)";
+        })
+        .on("filtered", redrawSVG);
+
+
+
+
+    /*CHOROPLETH CHART*/
     var choroplethDimension = ndx.dimension(function (d){
         return d.tweet.geo.place.country_code;
     });
@@ -194,36 +222,6 @@ d3.json('/findAll', function (data){
 
 
 
-
-
-    /*MONTH CHART*/
-    var monthDimension = ndx.dimension(function (d) {
-        var date = dateTimeFormat.parse(d.tweet.time);
-        return months[date.getMonth()];
-    });
-
-    var monthGroup = monthDimension.group();
-
-    //Create a pie chart and use the given css selector as anchor.
-    //You can also specify an optional chart group for this chart to be scoped within.
-    //When a chart belongs to a specific group then any interaction with such chart will only trigger redrawSVG on other charts
-    //within the same chart group.
-    monthChart.width(180)
-        .height(180)
-        .radius(80)
-        .innerRadius(30)
-        .dimension(monthDimension)
-        .group(monthGroup)
-        .title(function (d){
-            return d.key + " (" + Math.floor(d.value / all.value() * 100) + "%)";
-        })
-        .on("filtered", redrawSVG);
-
-
-
-
-
-
     /* DATA COUNT*/
 	dc.dataCount(".dc-data-count")
         .dimension(ndx)
@@ -234,12 +232,18 @@ d3.json('/findAll', function (data){
 
 
 
-    /*LEAFLET PLOTTED MAP*/
-    //create the map and start in London
-    var map = L.map('plotted-map').setView([51.505, -0.09], 2);
 
+    /*MAPS*/
+    //Define the open street map url and attrib text for future use
     var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     var attribText = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+
+
+
+    /*LEAFLET SENTIMENT MAP*/
+    //create the map and start in London
+    var map = L.map('plotted-map').setView([51.505, -0.09], 2);
+    
     //add tile layer
     L.tileLayer(osmUrl, {
         attribution: attribText,
@@ -279,7 +283,9 @@ d3.json('/findAll', function (data){
 
 
 
-    /*Choropleth Map*/
+
+
+    /*LEAFLET CHOROPLETH MAP*/
     //setup the data
     for (var i = 0; i < countryDimension.group().all().length; i++) {
         for (var j = 0; j < countriesJson.features.length; j++) {
@@ -289,7 +295,6 @@ d3.json('/findAll', function (data){
             }
         };
     };
-
 
     //setup the map
     var cMap = L.map('choropleth-map').setView([51.505, -0.09], 2);
@@ -349,7 +354,7 @@ d3.json('/findAll', function (data){
 
 
 
-    /*D3 & Leaflet CHOROPLETH MAP*/
+    /*D3 & LEAFLET CHOROPLETH MAP*/
     var mapCountryDimension = ndx.dimension(function (d){
         return d.tweet.geo.place.country_code;
     });
@@ -374,7 +379,7 @@ d3.json('/findAll', function (data){
     // colour ramp, a range of colours red to blue using a scale from 0 to the max tweet count
     //var ramp = d3.scale.linear().domain([0,mapCountryDimension.group().top(1)]).range(["red","blue"]);
 
-    feature = g.selectAll("path")
+    var feature = g.selectAll("path")
         .data(countriesJson.features)
         .enter().append("path")
         .on("click", countryClicked);
@@ -580,7 +585,6 @@ d3.json('/findAll', function (data){
 
         feature.attr("d", path);
     }
-
     
     function styleChoropleth(feature) {
         return {
@@ -594,9 +598,6 @@ d3.json('/findAll', function (data){
     }
 
     function getChoroplethColor(d) {
-        //TODO: adjust the colours and decide values
-        //Math.floor(d.value / all.value() * 100)
-
         return d > choroplethGrades[6] ? '#800026' :
                d > choroplethGrades[5] ? '#BD0026' :
                d > choroplethGrades[4] ? '#E31A1C' :
@@ -651,7 +652,7 @@ d3.json('/findAll', function (data){
 
 
     
-    
+    /*RESET EVENT HANDLERS THAT NEED MAP REDRAWS*/
     //reset map button clicked
     $("#d3-map-reset").on("click", function(){
         //clear all the map filters and redraw the map as no countries are selected
@@ -671,18 +672,12 @@ d3.json('/findAll', function (data){
         dc.redrawAll();
     });
 
+    /*CLOSURE TO RENDER THE CHARTS*/
     (function (){
         dc.renderAll();
         $("#overlay").hide();
-    })();
-
-    //last line
-    
-        
+    })();      
 });
-function startRendering(callback){ 
-    callback();
-}
 
 //returns the correct icon depending on polarity
 function getIcon(polarity){
