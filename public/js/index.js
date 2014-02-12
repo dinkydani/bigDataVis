@@ -20,6 +20,8 @@ var choroplethGrades = [0, 10, 50, 100, 200, 500, 1000, 2000];
 var selectedCountries = []; //array of countries selected on the map
 var selectedCountry = null;
 
+var markerArray;
+
 d3.json('/findAll', function (data){
 	//create crossfilter dimensions and groups
 	var ndx = crossfilter(data);
@@ -241,6 +243,7 @@ d3.json('/findAll', function (data){
     /*LEAFLET SENTIMENT MAP*/
     //create the map and start in London
     var map = L.map('plotted-map').setView([51.505, -0.09], 2);
+    var markerLayer = L.layerGroup().addTo(map);
     
     //add tile layer
     L.tileLayer(osmUrl, {
@@ -249,35 +252,32 @@ d3.json('/findAll', function (data){
         maxZoom: 16
     }).addTo(map);
 
-    data.forEach(function (d){
-        //make a new marker for each tweet and get the icon based on polarity
-        var marker = L.marker(d.tweet.geo.geo.coordinates, {icon: getIcon(d.polarity) });
-        marker.bindPopup(d.text);
-        marker.on('click', function(e){
-            marker.openPopup();
-        });
-        marker.addTo(map);
-        //push to markers array for zoom
-        markers.push(marker);
-    });
+    var markerArray = new Array(data.length);
+    for (var i = 0; i < data.length; i++){
+        currentTweet = data[i];
+        markerArray[i] = L.marker(currentTweet.tweet.geo.geo.coordinates, {icon: getIcon(currentTweet.polarity) }).bindPopup(currentTweet.text);         
+    }
 
-    //set event handler for when the map has been zoomed in/out
-    map.on("zoomend", function(){
+    markerLayer = L.layerGroup(markerArray).addTo(map);
+
+    map.on("zoomend", resizeMarkers);
+
+    function resizeMarkers(){
         var currentZoom = map.getZoom();
         //set the size of the icon 3 times the current zoom level which starts at 2 and icon size 8
         //this gives a sensible size icon
         var size = currentZoom * 3;
         var newIconSize = [size, size];
-        for (var i = 0; i < markers.length; i++) {
+        for (var i = 0; i < markerArray.length; i++) {
             //get the existing marker image
-            var url = markers[i].options.icon.options.iconUrl;
+            var url = markerArray[i].options.icon.options.iconUrl;
             var newIcon = L.icon({
                 iconUrl: url,
                 iconSize: newIconSize
             });
-            markers[i].setIcon(newIcon);
+            markerArray[i].setIcon(newIcon);
         }
-    });
+    }
 
 
 
