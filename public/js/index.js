@@ -20,7 +20,7 @@ var choroplethGrades = [0, 10, 50, 100, 200, 500, 1000, 2000];
 var selectedCountries = []; //array of countries selected on the map
 var selectedCountry = null;
 
-var markerArray = [];
+var markerArray;
 
 d3.json('/findAll', function (data){
 	//create crossfilter dimensions and groups
@@ -277,7 +277,6 @@ d3.json('/findAll', function (data){
                 {icon: getIcon(currentTweet.polarity) }).bindPopup(currentTweet.text);
 
             markers.addLayer(marker);
-            markerArray.push(marker);
         }
 
     var polygon;
@@ -314,24 +313,24 @@ d3.json('/findAll', function (data){
 
     // markerLayer = L.layerGroup(markerArray).addTo(map);
 
-    map.on("zoomend", resizeMarkers);
+    // map.on("zoomend", resizeMarkers);
 
-    function resizeMarkers(){
-        var currentZoom = map.getZoom();
-        //set the size of the icon 3 times the current zoom level which starts at 2 and icon size 8
-        //this gives a sensible size icon
-        var size = currentZoom * 3;
-        var newIconSize = [size, size];
-        for (var i = 0; i < markerArray.length; i++) {
-            //get the existing marker image
-            var url = markerArray[i].options.icon.options.iconUrl;
-            var newIcon = L.icon({
-                iconUrl: url,
-                iconSize: newIconSize
-            });
-            markerArray[i].setIcon(newIcon);
-        }
-    }
+    // function resizeMarkers(){
+    //     var currentZoom = map.getZoom();
+    //     //set the size of the icon 3 times the current zoom level which starts at 2 and icon size 8
+    //     //this gives a sensible size icon
+    //     var size = currentZoom * 3;
+    //     var newIconSize = [size, size];
+    //     for (var i = 0; i < markerArray.length; i++) {
+    //         //get the existing marker image
+    //         var url = markerArray[i].options.icon.options.iconUrl;
+    //         var newIcon = L.icon({
+    //             iconUrl: url,
+    //             iconSize: newIconSize
+    //         });
+    //         markerArray[i].setIcon(newIcon);
+    //     }
+    // }
 
 
 
