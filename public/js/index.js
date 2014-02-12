@@ -20,7 +20,7 @@ var choroplethGrades = [0, 10, 50, 100, 200, 500, 1000, 2000];
 var selectedCountries = []; //array of countries selected on the map
 var selectedCountry = null;
 
-var markerArray;
+var markerArray = [];
 
 d3.json('/findAll', function (data){
 	//create crossfilter dimensions and groups
@@ -252,14 +252,67 @@ d3.json('/findAll', function (data){
         maxZoom: 16
     }).addTo(map);
 
-    var markerArray = new Array(data.length);
-    for (var i = 0; i < data.length; i++){
-        currentTweet = data[i];
-        markerArray[i] = L.marker(currentTweet.tweet.geo.geo.coordinates,
-            {icon: getIcon(currentTweet.polarity) }).bindPopup(currentTweet.text);         
-    }
+    // var markerClusterLayer = L.MarkerClusterGroup();
 
-    markerLayer = L.layerGroup(markerArray).addTo(map);
+    // for (var i = 0; i < data.length; i++){
+    //     currentTweet = data[i];
+    //     var marker = L.marker(currentTweet.tweet.geo.geo.coordinates,
+    //         {icon: getIcon(currentTweet.polarity) }).bindPopup(currentTweet.text);
+    //     markerClusterLayer.addLayer(marker);
+    // }
+
+    // map.addLayer(markerClusterLayer);
+
+    var markers = L.markerClusterGroup({
+        maxClusterRadius: 100,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true,
+        disableClusteringAtZoom: 16
+    });
+        
+        for (var i = 0; i < data.length; i++) {
+            var currentTweet = data[i];
+            var marker = L.marker(currentTweet.tweet.geo.geo.coordinates,
+                {icon: getIcon(currentTweet.polarity) }).bindPopup(currentTweet.text);
+
+            markers.addLayer(marker);
+            markerArray.push(marker);
+        }
+
+    var polygon;
+        markers.on('clustermouseover', function (a) {
+            if (polygon) {
+                map.removeLayer(polygon);
+            }
+            polygon = L.polygon(a.layer.getConvexHull());
+            map.addLayer(polygon);
+        });
+
+        markers.on('clustermouseout', function (a) {
+            if (polygon) {
+                map.removeLayer(polygon);
+                polygon = null;
+            }
+        });
+
+        map.on('zoomend', function () {
+            if (polygon) {
+                map.removeLayer(polygon);
+                polygon = null;
+            }
+        });
+
+    map.addLayer(markers);
+
+    // markerArray = new Array(data.length);
+    // for (var i = 0; i < data.length; i++){
+    //     currentTweet = data[i];
+    //     markerArray[i] = L.marker(currentTweet.tweet.geo.geo.coordinates,
+    //         {icon: getIcon(currentTweet.polarity) }).bindPopup(currentTweet.text);         
+    // }
+
+    // markerLayer = L.layerGroup(markerArray).addTo(map);
 
     map.on("zoomend", resizeMarkers);
 
