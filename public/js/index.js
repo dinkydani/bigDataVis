@@ -255,12 +255,15 @@ d3.json('/findAll', function (data){
     plotMarkers();
 
     function plotMarkers(){
+        map.removeLayer(markerLayer);
+
         var markerArray = new Array(data.length);
         for (var i = 0; i < data.length; i++){
             currentTweet = data[i];
             markerArray[i] = L.marker(currentTweet.tweet.geo.geo.coordinates,
                 {icon: getIcon(currentTweet.polarity) }).bindPopup(currentTweet.text);         
         }
+        
         markerLayer = L.layerGroup(markerArray).addTo(map);
     }
 
