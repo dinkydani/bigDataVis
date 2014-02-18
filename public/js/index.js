@@ -12,8 +12,7 @@ var months = ["January","February","March","April","May","June","July", "August"
 
 //var coloursBlue = ['#084594', '#2171b5', '#4292c6', '#6baed6', '#9ecae1', '#c6dbef', '#eff3ff']; //darkest to lightest
 var coloursBlue = ['#3182bd', '#6baed6', '#9ecae1', '#c6dbef', '#dadaeb', '#c6dbef', '#eff3ff']; //first 5 default dc.js colours
-var countryColours = ["#a6cee3", "#1f78b4", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99",
-                        "#bc80bd", "#80b1d3", "#a50026", "#0099FF", "#FFCC00", "#FF00FF", "#660066", "#000099", "#00FF00", "#00FFCC"];
+
 var dateTimeFormat = d3.time.format("%a %b %d %H:%M:%S %Z %Y");
 
 var choroplethGrades = [0, 10, 50, 100, 200, 500, 1000, 2000];
@@ -118,7 +117,6 @@ d3.json('/findAll', function (data){
         .radius(80)
         .dimension(countryDimension)
         .group(countryGroup)
-        .ordinalColors(countryColours)
         .title(function (d){
             return d.key + ": " + d.value + " (" + Math.floor(d.value / all.value() * 100) + "%)";
         })
