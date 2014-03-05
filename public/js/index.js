@@ -470,7 +470,7 @@ d3.json('/findAll', function (data){
             g.selectAll("path")
                 .style('fill', function (d) {
                     if (selectedCountry === d) {
-                      return getChoroplethColor(indexed[d.properties.ISO_A2]) }
+                      return getChoroplethColorBlue(indexed[d.properties.ISO_A2]) }
                     else { 
                       return '#E3E3E3';
                     }
@@ -594,7 +594,7 @@ d3.json('/findAll', function (data){
                 // this time look up the tweet count from the indexed cf group
                 var count = indexed[d.properties.ISO_A2];
                 // make a colour from the count and return that as the fill
-                return getChoroplethColor(count);       
+                return getChoroplethColorBlue(count);       
         }).append("svg:title")
             .text(function(d) {
                 return "Country: " + d.properties.NAME + "\nTweets: " + (indexed[d.properties.ISO_A2] !== undefined ? indexed[d.properties.ISO_A2] : 0);
