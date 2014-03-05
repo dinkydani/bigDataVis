@@ -5,6 +5,7 @@ var countryChart = dc.pieChart("#country-chart");
 var monthChart = dc.pieChart("#month-chart");
 var choroplethChart = dc.geoChoroplethChart("#choropleth-chart");
 var dateChart = dc.barChart("#date-chart");
+var countryBar = dc.barChart("#country-bar");
 
 var markers = []; //markers array for handling map zoom
 var days = ["0.Sunday","1.Monday","2.Tuesday","3.Wednesday","4.Thursday","5.Friday","6.Saturday"];
@@ -166,7 +167,28 @@ d3.json('/findAll', function (data){
 
 
 
+    var countryBarDim = ndx.dimension(function (d){
+        return d.tweet.geo.place.country_code;
+    });
 
+    var countryBarGrp = countryBarDim.group()
+        .reduceCount(function (d) {
+            console.log(d);
+            return d.tweet.geo.place.country_code;
+        })
+
+    countryBar
+        .height(300)
+        .dimension(countryBarDim)
+        .group(countryBarGrp)
+        .gap(50)
+        .renderHorizontalGridLines(true)
+        .on("filtered", redrawSVG)
+        .x(d3.scale.ordinal().domain(data.map(function (d){
+            return d.tweet.geo.place.country_code;
+        })))
+        .xUnits(dc.units.ordinal)
+        .elasticY(true);
 
     /*MONTH CHART*/
     var monthDimension = ndx.dimension(function (d) {
